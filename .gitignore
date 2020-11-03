@@ -1,0 +1,13 @@
+# IntelliJ #
+.idea/
+**.iml
+
+# Gradle #
+.gradle
+build
+
+# Project #
+data/
+config/*
+
+.env
