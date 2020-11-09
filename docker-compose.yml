@@ -1,17 +1,12 @@
-version: '3.7'
+version: '3.8'
 services:
-  starter:
-    container_name: Starter
-    build:
-      dockerfile: Dockerfile
-      context: .
+  logbot:
+    container_name: LogBot
+    image: theprogrammershangout/logbot:latest
     volumes:
       - type: bind
-        source: ./config/config.json
-        target: /config/config.json
+        source: ./config
+        target: /config
     restart: always
     env_file:
       - .env
-
-volumes:
-  app:
