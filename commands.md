@@ -13,6 +13,13 @@
 | setprefix    | Text      | Set the bot prefix.             |
 | setstaffrole | Role      | Set the bot staff role.         |
 
+## Listeners
+| Commands | Arguments | Description                                  |
+| -------- | --------- | -------------------------------------------- |
+| Status   |           | List all listeners and their current status. |
+| Toggle   | Listener  | Toggle listener                              |
+| test     |           | <No Description>                             |
+
 ## Utility
 | Commands | Arguments | Description          |
 | -------- | --------- | -------------------- |

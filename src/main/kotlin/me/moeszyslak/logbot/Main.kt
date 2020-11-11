@@ -1,19 +1,13 @@
 package me.moeszyslak.logbot
 
-import com.gitlab.kordlib.common.entity.Permission
-import com.gitlab.kordlib.common.entity.Permissions
 import com.gitlab.kordlib.common.entity.Snowflake
-import com.gitlab.kordlib.core.entity.PermissionOverwrite
-import com.gitlab.kordlib.core.entity.PermissionOverwriteEntity
 import com.gitlab.kordlib.gateway.Intent
 import com.gitlab.kordlib.gateway.Intents
 import com.gitlab.kordlib.gateway.PrivilegedIntent
-import kotlinx.coroutines.flow.toList
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.services.BotStatsService
 import me.moeszyslak.logbot.services.PermissionsService
 import me.jakejmattson.discordkt.api.dsl.bot
-import me.jakejmattson.discordkt.api.extensions.addInlineField
 import me.moeszyslak.logbot.extensions.requiredPermissionLevel
 import java.awt.Color
 
@@ -72,7 +66,7 @@ suspend fun main() {
 
                     name = "Configuration"
                     value = "```" +
-                            "Admin Role: ${adminRole.name}" +
+                            "Admin Role: ${adminRole.name}\n" +
                             "Staff Role: ${staffRole.name}\n" +
                             "Logging Channel: ${loggingChannel.name}\n" +
                             "History Channel: ${historyChannel.name}" +

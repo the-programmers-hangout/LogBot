@@ -10,10 +10,12 @@ data class Configuration(
         val guildConfigurations: MutableMap<Long, GuildConfiguration> = mutableMapOf()) : Data("config/config.json") {
 
     operator fun get(id: Long) = guildConfigurations[id]
+
     fun hasGuildConfig(guildId: Long) = guildConfigurations.containsKey(guildId)
 
     fun setup(guild: Guild, prefix: String, adminRole: Role,
               staffRole: Role, logChannel: Channel, historyChannel: Channel) {
+
         if (guildConfigurations[guild.id.longValue] != null) return
 
         val newConfiguration = GuildConfiguration(
@@ -37,5 +39,14 @@ data class GuildConfiguration(
         var historyChannel: Long,
         var trackMembers: Boolean = true,
         var trackMessages: Boolean = true,
+        var listeners: MutableMap<Listener, Boolean> = mutableMapOf(
+                Listener.Members to false,
+                Listener.Messages to false
+        ),
         var ignoredRoles: MutableList<Long> = mutableListOf()
 )
+
+enum class Listener(val value: String) {
+    Members("members"),
+    Messages("messages")
+}
