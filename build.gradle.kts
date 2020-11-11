@@ -17,6 +17,7 @@ dependencies {
 }
 
 tasks {
+
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
@@ -30,7 +31,6 @@ tasks {
         }
     }
 }
-
 
 object Versions {
     const val BOT = "1.0.0"

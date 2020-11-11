@@ -1,5 +1,5 @@
-FROM gradle:6.5.1-jdk14 AS build
-COPY --chown=gradle:gradle . /starter
+FROM gradle:6.7.0-jdk15 AS build
+COPY --chown=gradle:gradle . /logbot
 WORKDIR /logbot
 RUN gradle shadowJar --no-daemon
 
