@@ -18,7 +18,6 @@
 | -------- | --------- | -------------------------------------------- |
 | Status   |           | List all listeners and their current status. |
 | Toggle   | Listener  | Toggle listener                              |
-| test     |           | <No Description>                             |
 
 ## Utility
 | Commands | Arguments | Description          |
