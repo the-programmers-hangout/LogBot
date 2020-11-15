@@ -21,13 +21,12 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
             respond {
                 title = "Listener status"
 
-                guildConfig.listeners
-                        .map { if (it.value) "${Emojis.whiteCheckMark} ${it.key.name}" else "${Emojis.x} ${it.key.name}" }
-                        .forEach {
-                            field {
-                                name = it
-                            }
-                        }
+                field {
+                    value = guildConfig.listeners
+                            .map { if (it.value) "${Emojis.whiteCheckMark} ${it.key.name}" else "${Emojis.x} ${it.key.name}" }
+                            .joinToString("\n\n")
+                }
+
             }
         }
     }
@@ -43,7 +42,7 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
             guildConfig.listeners[listener] = !guildConfig.listeners[listener]!!
             configuration.save()
 
-            respond("${listener.value} is now ${if (guildConfig.listeners[listener]!!) "enabled" else "disabled"}")
+            respond("Logging of ${listener.value} is now ${if (guildConfig.listeners[listener]!!) "enabled" else "disabled"}")
 
         }
     }

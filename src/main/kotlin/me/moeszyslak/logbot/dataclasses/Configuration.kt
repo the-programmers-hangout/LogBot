@@ -37,8 +37,6 @@ data class GuildConfiguration(
         var staffRole: Long,
         var logChannel: Long,
         var historyChannel: Long,
-        var trackMembers: Boolean = true,
-        var trackMessages: Boolean = true,
         var listeners: MutableMap<Listener, Boolean> = mutableMapOf(
                 Listener.Members to false,
                 Listener.Messages to false

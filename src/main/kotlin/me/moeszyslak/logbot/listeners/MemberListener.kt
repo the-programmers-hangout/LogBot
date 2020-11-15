@@ -4,6 +4,7 @@ import com.gitlab.kordlib.core.event.guild.MemberJoinEvent
 import com.gitlab.kordlib.core.event.guild.MemberLeaveEvent
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.moeszyslak.logbot.dataclasses.Configuration
+import me.moeszyslak.logbot.dataclasses.Listener
 import me.moeszyslak.logbot.services.LoggerService
 
 fun memberListener(loggerService: LoggerService, configuration: Configuration) = listeners {
@@ -11,7 +12,7 @@ fun memberListener(loggerService: LoggerService, configuration: Configuration) =
         val guild = getGuild()
         val guildConfig = configuration[guild.id.longValue] ?: return@on
 
-        if (!guildConfig.trackMembers) return@on
+        if (!guildConfig.listeners[Listener.Members]!!) return@on
 
         loggerService.memberJoin(guild, member)
     }
@@ -20,7 +21,7 @@ fun memberListener(loggerService: LoggerService, configuration: Configuration) =
         val guild = getGuild()
         val guildConfig = configuration[guild.id.longValue] ?: return@on
 
-        if (!guildConfig.trackMembers) return@on
+        if (!guildConfig.listeners[Listener.Members]!!) return@on
 
         loggerService.memberLeave(guild, user)
     }

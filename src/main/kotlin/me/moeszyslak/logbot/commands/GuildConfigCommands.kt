@@ -25,7 +25,7 @@ fun guildConfigCommands(configuration: Configuration) = commands("Configuration"
         }
     }
 
-    guildCommand("setprefix") {
+    guildCommand("Prefix") {
         description = "Set the bot prefix."
         requiredPermissionLevel = PermissionLevel.Administrator
         execute(EveryArg) {
@@ -40,7 +40,7 @@ fun guildConfigCommands(configuration: Configuration) = commands("Configuration"
         }
     }
 
-    guildCommand("setstaffrole") {
+    guildCommand("StaffRole") {
         description = "Set the bot staff role."
         requiredPermissionLevel = PermissionLevel.Administrator
         execute(RoleArg) {
@@ -55,7 +55,7 @@ fun guildConfigCommands(configuration: Configuration) = commands("Configuration"
         }
     }
 
-    guildCommand("setadminrole") {
+    guildCommand("AdminRole") {
         description = "Set the bot admin role."
         requiredPermissionLevel = PermissionLevel.Administrator
         execute(RoleArg) {
