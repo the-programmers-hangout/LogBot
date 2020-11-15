@@ -14,10 +14,11 @@
 | setstaffrole | Role      | Set the bot staff role.         |
 
 ## Listeners
-| Commands | Arguments | Description                                  |
-| -------- | --------- | -------------------------------------------- |
-| Status   |           | List all listeners and their current status. |
-| Toggle   | Listener  | Toggle listener                              |
+| Commands   | Arguments                 | Description                                                     |
+| ---------- | ------------------------- | --------------------------------------------------------------- |
+| IgnoreList | (add/remove/list), (Role) | List ignored roles and add/remove roles from the exclusion list |
+| Status     |                           | List all listeners and their current status.                    |
+| Toggle     | Listener                  | Toggle listener                                                 |
 
 ## Utility
 | Commands | Arguments | Description          |

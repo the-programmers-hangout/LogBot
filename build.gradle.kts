@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation("me.jakejmattson:DiscordKt:${Versions.DISCORDKT}")
+    implementation("com.google.guava:guava:30.0-jre")
 }
 
 tasks {

@@ -1,25 +1,41 @@
 package me.moeszyslak.logbot.services
 
-import me.moeszyslak.logbot.dataclasses.Configuration
+import com.gitlab.kordlib.core.entity.Attachment
+import com.gitlab.kordlib.core.entity.User
+import com.gitlab.kordlib.core.entity.channel.Channel
+import com.google.common.collect.EvictingQueue
+import me.jakejmattson.discordkt.api.annotations.Service
+import java.time.Instant
 
-//@Service
-//class CacheService(private val configuration: Configuration) {
-//
-//
-//    private val messageCaches: MutableMap<Long, EvictingQueue<Pair<Long, Message>>> = mutableMapOf()
-//
-//    fun addMessageToCache(guild: Guild, message: Message) {
-//        if (!messageCaches.containsKey(guild.idLong))
-//            messageCaches[guild.idLong] = EvictingQueue.create(configuration.cacheAmount)
-//
-//        messageCaches[guild.idLong]!!.add(message.idLong to message)
-//    }
-//
-//    fun getMessageFromCache(guild: Guild, messageId: Long): Message? {
-//        return messageCaches[guild.idLong]?.find { it.first == messageId }?.second
-//    }
-//
-//    fun removeMessageFromCache(guild: Guild, message: Message) {
-//        messageCaches[guild.idLong]?.remove(message.idLong to message)
-//    }
-//}
+data class CachedMessage(
+        val content: String,
+        val channel: Channel,
+        val user: User,
+        val messageId: Long,
+        val timestamp: Instant,
+        val attachments: Set<Attachment>
+)
+
+@Suppress("UnstableApiUsage")
+@Service
+class CacheService {
+
+    private val messageCaches: MutableMap<Long, EvictingQueue<CachedMessage>> = mutableMapOf()
+
+    fun addMessageToCache(guildId: Long, cachedMessage: CachedMessage) {
+        if (!messageCaches.containsKey(guildId)) {
+            val cacheAmt = (System.getenv("CACHE_AMT") ?: "4000").toInt()
+            messageCaches[guildId] = EvictingQueue.create(cacheAmt)
+        }
+
+        messageCaches[guildId]!!.add(cachedMessage)
+    }
+
+    fun getMessageFromCache(guildId: Long, messageId: Long): CachedMessage? {
+        return messageCaches[guildId]?.firstOrNull { it.messageId == messageId }
+    }
+
+    fun removeMessageFromCache(guildId: Long, messageId: Long, ) {
+        messageCaches[guildId]?.removeIf { it.messageId == messageId }
+    }
+}
