@@ -38,6 +38,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
                 message.getChannel(),
                 author,
                 message.id.longValue,
+                guild.id.longValue,
                 message.timestamp,
                 message.attachments
         )
@@ -68,6 +69,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
                 cachedMessage.channel,
                 cachedMessage.user,
                 cachedMessage.messageId,
+                guildId,
                 Instant.now(),
                 cachedMessage.attachments
 

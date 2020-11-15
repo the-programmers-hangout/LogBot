@@ -12,6 +12,7 @@ data class CachedMessage(
         val channel: Channel,
         val user: User,
         val messageId: Long,
+        val guildId: Long,
         val timestamp: Instant,
         val attachments: Set<Attachment>
 )

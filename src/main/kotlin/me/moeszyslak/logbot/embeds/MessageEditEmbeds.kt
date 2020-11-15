@@ -42,7 +42,7 @@ fun EmbedBuilder.createMessageDeleteEmbed(cachedMessage: CachedMessage) {
 }
 
 fun EmbedBuilder.createMessageEditedEmbed(newMessage: CachedMessage, cachedMessage: CachedMessage) {
-    title = "Message Deleted"
+    title = "Message Edited"
     color = Color.ORANGE
 
     field {
@@ -54,6 +54,12 @@ fun EmbedBuilder.createMessageEditedEmbed(newMessage: CachedMessage, cachedMessa
     field {
         name = "Channel"
         value = cachedMessage.channel.mention
+        inline = true
+    }
+
+    field {
+        name = "Link"
+        value = "[Jump To](https://discord.com/channels/${cachedMessage.guildId}/${cachedMessage.channel.id.value}/${cachedMessage.messageId})"
         inline = true
     }
 
