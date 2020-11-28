@@ -3,9 +3,12 @@ package me.moeszyslak.logbot.services
 import com.gitlab.kordlib.core.entity.Attachment
 import com.gitlab.kordlib.core.entity.User
 import com.gitlab.kordlib.core.entity.channel.Channel
-import com.google.common.collect.EvictingQueue
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import me.jakejmattson.discordkt.api.annotations.Service
 import java.time.Instant
+import java.util.concurrent.ConcurrentMap
+import java.util.concurrent.ConcurrentHashMap
 
 data class CachedMessage(
         val content: String,
@@ -17,26 +20,25 @@ data class CachedMessage(
         val attachments: Set<Attachment>
 )
 
-@Suppress("UnstableApiUsage")
 @Service
 class CacheService {
 
-    private val messageCaches: MutableMap<Long, EvictingQueue<CachedMessage>> = mutableMapOf()
+    private val messages: ConcurrentMap<Long, Cache<Long, CachedMessage>> = ConcurrentHashMap()
+    private val cacheAmt = System.getenv("CACHE_AMT")?.toLong() ?: 4000
 
     fun addMessageToCache(guildId: Long, cachedMessage: CachedMessage) {
-        if (!messageCaches.containsKey(guildId)) {
-            val cacheAmt = (System.getenv("CACHE_AMT") ?: "4000").toInt()
-            messageCaches[guildId] = EvictingQueue.create(cacheAmt)
+        val cache = messages.getOrPut(guildId) {
+            CacheBuilder.newBuilder().maximumSize(cacheAmt).build()
         }
 
-        messageCaches[guildId]!!.add(cachedMessage)
+        cache.put(cachedMessage.messageId, cachedMessage)
     }
 
     fun getMessageFromCache(guildId: Long, messageId: Long): CachedMessage? {
-        return messageCaches[guildId]?.firstOrNull { it.messageId == messageId }
+        return messages.get(guildId)?.getIfPresent(messageId)
     }
 
-    fun removeMessageFromCache(guildId: Long, messageId: Long, ) {
-        messageCaches[guildId]?.removeIf { it.messageId == messageId }
+    fun removeMessageFromCache(guildId: Long, messageId: Long) {
+        messages.get(guildId)?.invalidate(messageId)
     }
 }
