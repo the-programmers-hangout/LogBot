@@ -14,7 +14,7 @@ fun voiceListener(configuration: Configuration) = listeners {
         val guildId = state.guildId ?: return@on
         val guildConfig = configuration[guildId.longValue] ?: return@on
 
-        val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake())
+        val channel = kord.getChannelOf<TextChannel>(guildConfig.logChannel.toSnowflake())
             ?: return@on
 
         if (state.channelId == null) {
