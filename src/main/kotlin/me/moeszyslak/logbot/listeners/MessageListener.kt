@@ -1,8 +1,11 @@
 package me.moeszyslak.logbot.listeners
 
+import com.gitlab.kordlib.common.entity.Snowflake
+import com.gitlab.kordlib.core.Kord
 import com.gitlab.kordlib.core.behavior.channel.createEmbed
 import com.gitlab.kordlib.core.entity.Role
 import com.gitlab.kordlib.core.entity.channel.TextChannel
+import com.gitlab.kordlib.core.event.message.MessageBulkDeleteEvent
 import com.gitlab.kordlib.core.event.message.MessageCreateEvent
 import com.gitlab.kordlib.core.event.message.MessageDeleteEvent
 import com.gitlab.kordlib.core.event.message.MessageUpdateEvent
@@ -86,19 +89,28 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
 
     }
 
-    on<MessageDeleteEvent> {
-        val guild = getGuild() ?: return@on
-        val cachedMessage = cacheService.getMessageFromCache(guild.id.longValue, messageId.longValue) ?: return@on
-        val guildConfig = configuration[guild.id.longValue] ?: return@on
+    suspend fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake): Unit {
+        val cachedMessage = cacheService.getMessageFromCache(guildId.longValue, messageId.longValue) ?: return
+        val guildConfig = configuration[guildId.longValue] ?: return
 
-        if (!guildConfig.listeners[Listener.Messages]!!) return@on
-        val roles = cachedMessage.user.asMember(guild.id).roles.toList()
-        if (!shouldBeLogged(roles, guildConfig.ignoredRoles)) return@on
+        if (!guildConfig.listeners[Listener.Messages]!!) return
+        val roles = cachedMessage.user.asMember(guildId).roles.toList()
+        if (!shouldBeLogged(roles, guildConfig.ignoredRoles)) return
 
-        val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return@on
+        val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return
         channel.createEmbed {
             createMessageDeleteEmbed(cachedMessage)
         }
+    }
+
+    on<MessageDeleteEvent> {
+        val guild = getGuild() ?: return@on
+        logMessageDelete(kord, guild.id, messageId)
+    }
+
+    on<MessageBulkDeleteEvent> {
+        val guild = getGuild() ?: return@on
+        messageIds.forEach { logMessageDelete(kord, guild.id, it) }
     }
 }
 
