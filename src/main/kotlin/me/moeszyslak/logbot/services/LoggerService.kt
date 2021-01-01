@@ -2,6 +2,7 @@ package me.moeszyslak.logbot.services
 
 import com.gitlab.kordlib.common.entity.Snowflake
 import com.gitlab.kordlib.core.behavior.getChannelOf
+import com.gitlab.kordlib.core.behavior.channel.createMessage
 import com.gitlab.kordlib.core.entity.Guild
 import com.gitlab.kordlib.core.entity.Member
 import com.gitlab.kordlib.core.entity.User
@@ -51,6 +52,11 @@ class LoggerService(private val config: Configuration) {
     }
 
     private fun getLogConfig(guild: Guild) = config[guild.id.longValue]!!.logChannel.toSnowflake()
-    private suspend fun log(guild: Guild, logChannelId: Snowflake, message: String) = guild.getChannelOf<TextChannel>(logChannelId).createMessage(message)
+
+    private suspend fun log(guild: Guild, logChannelId: Snowflake, message: String) =
+        guild.getChannelOf<TextChannel>(logChannelId).createMessage {
+            content = message
+            allowedMentions { }
+        }
 }
 
