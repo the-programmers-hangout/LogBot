@@ -6,30 +6,25 @@ import com.gitlab.kordlib.core.event.VoiceStateUpdateEvent
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.discordkt.api.extensions.toSnowflake
 import me.moeszyslak.logbot.dataclasses.Configuration
-import me.moeszyslak.logbot.embeds.createVoiceJoinEmbed
-import me.moeszyslak.logbot.embeds.createVoiceLeaveEmbed
+import me.moeszyslak.logbot.dataclasses.Listener
+import me.moeszyslak.logbot.services.LoggerService
 
-fun voiceListener(configuration: Configuration) = listeners {
+fun voiceListener(loggerService: LoggerService, configuration: Configuration) = listeners {
     on<VoiceStateUpdateEvent> {
-        val guildId = state.guildId ?: return@on
-        val guildConfig = configuration[guildId.longValue] ?: return@on
+        val guild = state.getGuild()
 
-        val channel = kord.getChannelOf<TextChannel>(guildConfig.logChannel.toSnowflake())
-            ?: return@on
+        val guildConfig = configuration[guild.id.longValue] ?: return@on
+        if (!guildConfig.listenerEnabled(Listener.Voice)) return@on
 
         if (state.channelId == null) {
             val left = old ?: return@on
             val channelId = left.channelId ?: return@on
 
-            channel.createEmbed {
-                createVoiceLeaveEmbed(left.getMember(), channelId)
-            }
+            loggerService.voiceChannelLeave(guild, left.getMember(), channelId)
         } else if (state.channelId != old?.channelId) {
             val channelId = state.channelId ?: return@on
 
-            channel.createEmbed {
-                createVoiceJoinEmbed(state.getMember(), channelId)
-            }
+            loggerService.voiceChannelJoin(guild, state.getMember(), channelId)
         }
     }
 }

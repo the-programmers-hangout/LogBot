@@ -42,6 +42,14 @@ class LoggerService(private val config: Configuration) {
         "${user.descriptor()} created at ${LocalDateTime.ofInstant(user.id.timeStamp, ZoneOffset.UTC)} left the server"
     }
 
+    fun voiceChannelJoin(guild: Guild, user: User, channelId: Snowflake) = withLog(guild) {
+        "${user.descriptor()} joined voice channel <#${channelId.value}>"
+    }
+
+    fun voiceChannelLeave(guild: Guild, user: User, channelId: Snowflake) = withLog(guild) {
+        "${user.descriptor()} left voice channel <#${channelId.value}>"
+    }
+
     private fun getLogConfig(guild: Guild) = config[guild.id.longValue]!!.logChannel.toSnowflake()
     private suspend fun log(guild: Guild, logChannelId: Snowflake, message: String) = guild.getChannelOf<TextChannel>(logChannelId).createMessage(message)
 }

@@ -7,6 +7,7 @@ import me.jakejmattson.discordkt.api.arguments.RoleArg
 import me.jakejmattson.discordkt.api.dsl.commands
 import me.moeszyslak.logbot.arguments.ListenerArg
 import me.moeszyslak.logbot.dataclasses.Configuration
+import me.moeszyslak.logbot.dataclasses.Listener
 import me.moeszyslak.logbot.extensions.requiredPermissionLevel
 import me.moeszyslak.logbot.services.PermissionLevel
 import java.awt.Color
@@ -22,8 +23,8 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
                 title = "Listener status"
 
                 field {
-                    value = guildConfig.listeners
-                            .map { if (it.value) "${Emojis.whiteCheckMark} ${it.key.name}" else "${Emojis.x} ${it.key.name}" }
+                    value = enumValues<Listener>()
+                            .map { if (guildConfig.listenerEnabled(it)) "${Emojis.whiteCheckMark} ${it.name}" else "${Emojis.x} ${it.name}" }
                             .joinToString("\n\n")
                 }
 
@@ -39,10 +40,10 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
 
             val guildConfig = configuration[guild.id.longValue] ?: return@execute
 
-            guildConfig.listeners[listener] = !guildConfig.listeners[listener]!!
+            guildConfig.listeners[listener] = !guildConfig.listenerEnabled(listener)
             configuration.save()
 
-            respond("Logging of ${listener.value} is now ${if (guildConfig.listeners[listener]!!) "enabled" else "disabled"}")
+            respond("Logging of ${listener.value} is now ${if (guildConfig.listenerEnabled(listener)) "enabled" else "disabled"}")
 
         }
     }

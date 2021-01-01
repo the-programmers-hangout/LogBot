@@ -27,7 +27,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
         val prefix = guildConfig.prefix
         if (message.content.startsWith(prefix)) return@on
 
-        if (!guildConfig.listeners[Listener.Messages]!!) return@on
+        if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
 
         val author = message.author ?: return@on
         val member = author.asMember(guild.id)
@@ -50,7 +50,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
         new.author!!.takeUnless { it.bot == true } ?: return@on
         val guildId = new.guildId?.toLongOrNull() ?: return@on
         val guildConfig = configuration[guildId] ?: return@on
-        if (!guildConfig.listeners[Listener.Messages]!!) return@on
+        if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
 
         val guild = discord.api.getGuild(guildId.toSnowflake()) ?: return@on
         val member = new.member ?: return@on
@@ -91,7 +91,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
         val cachedMessage = cacheService.getMessageFromCache(guild.id.longValue, messageId.longValue) ?: return@on
         val guildConfig = configuration[guild.id.longValue] ?: return@on
 
-        if (!guildConfig.listeners[Listener.Messages]!!) return@on
+        if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
         val roles = cachedMessage.user.asMember(guild.id).roles.toList()
         if (!shouldBeLogged(roles, guildConfig.ignoredRoles)) return@on
 

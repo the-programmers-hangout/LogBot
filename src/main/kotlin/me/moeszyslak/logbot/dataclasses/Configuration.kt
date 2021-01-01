@@ -37,14 +37,14 @@ data class GuildConfiguration(
         var staffRole: Long,
         var logChannel: Long,
         var historyChannel: Long,
-        var listeners: MutableMap<Listener, Boolean> = mutableMapOf(
-                Listener.Members to false,
-                Listener.Messages to false
-        ),
-        var ignoredRoles: MutableList<Long> = mutableListOf()
-)
+        var listeners: MutableMap<Listener, Boolean> = mutableMapOf(),
+        var ignoredRoles: MutableList<Long> = mutableListOf()) {
+
+    fun listenerEnabled(l: Listener) = listeners[l] ?: false
+}
 
 enum class Listener(val value: String) {
     Members("members"),
-    Messages("messages")
+    Messages("messages"),
+    Voice("voice")
 }
