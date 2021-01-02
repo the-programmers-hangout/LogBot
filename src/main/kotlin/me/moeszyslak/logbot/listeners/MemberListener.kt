@@ -12,7 +12,7 @@ fun memberListener(loggerService: LoggerService, configuration: Configuration) =
         val guild = getGuild()
         val guildConfig = configuration[guild.id.longValue] ?: return@on
 
-        if (!guildConfig.listeners[Listener.Members]!!) return@on
+        if (!guildConfig.listenerEnabled(Listener.Members)) return@on
 
         loggerService.memberJoin(guild, member)
     }
@@ -21,7 +21,7 @@ fun memberListener(loggerService: LoggerService, configuration: Configuration) =
         val guild = getGuild()
         val guildConfig = configuration[guild.id.longValue] ?: return@on
 
-        if (!guildConfig.listeners[Listener.Members]!!) return@on
+        if (!guildConfig.listenerEnabled(Listener.Members)) return@on
 
         loggerService.memberLeave(guild, user)
     }
