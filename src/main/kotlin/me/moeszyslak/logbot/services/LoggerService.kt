@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import me.jakejmattson.discordkt.api.annotations.Service
 import me.jakejmattson.discordkt.api.extensions.toSnowflake
 import me.moeszyslak.logbot.dataclasses.Configuration
+import me.moeszyslak.logbot.extensions.descriptor
 import me.moeszyslak.logbot.extensions.idDescriptor
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -30,7 +31,7 @@ class LoggerService(private val config: Configuration) {
 
      */
     fun memberJoin(guild: Guild, member: Member) = withLog(guild) {
-        "${member.idDescriptor()} created at ${LocalDateTime.ofInstant(member.id.timeStamp, ZoneOffset.UTC)} joined the server"
+        "${member.descriptor()} created at ${LocalDateTime.ofInstant(member.id.timeStamp, ZoneOffset.UTC)} joined the server"
     }
 
     /*
@@ -40,7 +41,7 @@ class LoggerService(private val config: Configuration) {
      */
 
     fun memberLeave(guild: Guild, user: User) = withLog(guild) {
-        "${user.idDescriptor()} created at ${LocalDateTime.ofInstant(user.id.timeStamp, ZoneOffset.UTC)} left the server"
+        "${user.descriptor()} created at ${LocalDateTime.ofInstant(user.id.timeStamp, ZoneOffset.UTC)} left the server"
     }
 
     fun voiceChannelJoin(guild: Guild, user: User, channelId: Snowflake) = withLog(guild) {
