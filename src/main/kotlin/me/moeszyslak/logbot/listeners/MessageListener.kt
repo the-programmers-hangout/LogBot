@@ -9,7 +9,9 @@ import com.gitlab.kordlib.core.event.message.MessageBulkDeleteEvent
 import com.gitlab.kordlib.core.event.message.MessageCreateEvent
 import com.gitlab.kordlib.core.event.message.MessageDeleteEvent
 import com.gitlab.kordlib.core.event.message.MessageUpdateEvent
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.discordkt.api.extensions.toSnowflake
@@ -89,17 +91,20 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
 
     }
 
-    suspend fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake): Unit {
+    fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake): Unit {
         val cachedMessage = cacheService.getMessageFromCache(guildId.longValue, messageId.longValue) ?: return
         val guildConfig = configuration[guildId.longValue] ?: return
 
         if (!guildConfig.listenerEnabled(Listener.Messages)) return
-        val roles = cachedMessage.user.asMember(guildId).roles.toList()
-        if (!shouldBeLogged(roles, guildConfig.ignoredRoles)) return
 
-        val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return
-        channel.createEmbed {
-            createMessageDeleteEmbed(cachedMessage)
+        GlobalScope.launch {
+            val roles = cachedMessage.user.asMember(guildId).roles.toList()
+            if (!shouldBeLogged(roles, guildConfig.ignoredRoles)) return@launch
+
+            val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return@launch
+            channel.createEmbed {
+                createMessageDeleteEmbed(cachedMessage)
+            }
         }
     }
 
