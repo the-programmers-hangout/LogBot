@@ -18,12 +18,13 @@ import java.time.ZoneOffset
 
 @Service
 class LoggerService(private val config: Configuration) {
-    private fun withLog(guild: Guild, f: () -> String) =
+    private fun withLog(guild: Guild, shouldPing: Boolean = true, f: () -> String) =
             getLogConfig(guild).apply {
                 runBlocking {
-                    log(guild, getLogConfig(guild), f())
+                    log(guild, shouldPing, getLogConfig(guild), f())
                 }
             }
+
 
     /*
 
@@ -44,20 +45,23 @@ class LoggerService(private val config: Configuration) {
         "${user.descriptor()} created at ${LocalDateTime.ofInstant(user.id.timeStamp, ZoneOffset.UTC)} left the server"
     }
 
-    fun voiceChannelJoin(guild: Guild, user: User, channelId: Snowflake) = withLog(guild) {
+    fun voiceChannelJoin(guild: Guild, user: User, channelId: Snowflake) = withLog(guild, false) {
         "${user.idDescriptor()} joined voice channel <#${channelId.value}>"
     }
 
-    fun voiceChannelLeave(guild: Guild, user: User, channelId: Snowflake) = withLog(guild) {
+    fun voiceChannelLeave(guild: Guild, user: User, channelId: Snowflake) = withLog(guild, false) {
         "${user.idDescriptor()} left voice channel <#${channelId.value}>"
     }
 
     private fun getLogConfig(guild: Guild) = config[guild.id.longValue]!!.logChannel.toSnowflake()
 
-    private suspend fun log(guild: Guild, logChannelId: Snowflake, message: String) =
+    private suspend fun log(guild: Guild, shouldPing: Boolean, logChannelId: Snowflake, message: String) =
         guild.getChannelOf<TextChannel>(logChannelId).createMessage {
             content = message
-            allowedMentions { }
+
+            if (!shouldPing) {
+                allowedMentions { }
+            }
         }
 }
 
