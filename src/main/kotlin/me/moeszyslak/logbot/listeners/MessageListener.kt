@@ -35,7 +35,8 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
         if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
 
         val author = message.author ?: return@on
-        val member = author.asMember(guild.id)
+        val member = author.asMemberOrNull(guild.id) ?: return@on
+
         if (!shouldBeLogged(member.roles.toList(), guildConfig.ignoredRoles)) return@on
 
         val cachedMessage = CachedMessage(
@@ -91,14 +92,15 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
 
     }
 
-    fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake): Unit {
+    fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake) {
         val cachedMessage = cacheService.getMessageFromCache(guildId.longValue, messageId.longValue) ?: return
         val guildConfig = configuration[guildId.longValue] ?: return
 
         if (!guildConfig.listenerEnabled(Listener.Messages)) return
 
         GlobalScope.launch {
-            val roles = cachedMessage.user.asMember(guildId).roles.toList()
+            val member = cachedMessage.user.asMemberOrNull(guildId) ?: return@launch
+            val roles = member.roles.toList()
             if (!shouldBeLogged(roles, guildConfig.ignoredRoles)) return@launch
 
             val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return@launch

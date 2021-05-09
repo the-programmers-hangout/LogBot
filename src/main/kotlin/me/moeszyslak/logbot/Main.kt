@@ -104,7 +104,8 @@ suspend fun main() {
             val permissionsService = discord.getInjectionObjects(PermissionsService::class)
             val permission = command.requiredPermissionLevel
             if (guild != null) {
-                permissionsService.hasClearance(user.asMember(guild!!.id), permission)
+                val member = user.asMemberOrNull(guild!!.id) ?: return@permissions false
+                permissionsService.hasClearance(member, permission)
             } else {
                 false
             }
