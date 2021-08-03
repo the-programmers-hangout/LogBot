@@ -1,6 +1,7 @@
 package me.moeszyslak.logbot.extensions
 
-import com.gitlab.kordlib.rest.builder.message.EmbedBuilder
+import dev.kord.rest.builder.message.EmbedBuilder
+
 
 fun EmbedBuilder.createContinuableField(primaryTitle: String, content: String) = content
         .chunked(1024)

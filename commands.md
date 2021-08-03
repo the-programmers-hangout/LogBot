@@ -3,7 +3,7 @@
 ## Key 
 | Symbol      | Meaning                        |
 | ----------- | ------------------------------ |
-| (Argument)  | Argument is not required.      |
+| [Argument]  | Argument is not required.      |
 
 ## Configuration
 | Commands  | Arguments | Description                     |
@@ -16,12 +16,12 @@
 ## Listeners
 | Commands   | Arguments                 | Description                                                     |
 | ---------- | ------------------------- | --------------------------------------------------------------- |
-| IgnoreList | (add/remove/list), (Role) | List ignored roles and add/remove roles from the exclusion list |
+| IgnoreList | [add/remove/list], [Role] | List ignored roles and add/remove roles from the exclusion list |
 | Status     |                           | List all listeners and their current status.                    |
 | Toggle     | Listener                  | Toggle listener                                                 |
 
 ## Utility
 | Commands | Arguments | Description          |
 | -------- | --------- | -------------------- |
-| Help     | (Command) | Display a help menu. |
+| Help     | [Command] | Display a help menu. |
 

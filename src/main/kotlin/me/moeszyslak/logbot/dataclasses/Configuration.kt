@@ -1,8 +1,8 @@
 package me.moeszyslak.logbot.dataclasses
 
-import com.gitlab.kordlib.core.entity.Guild
-import com.gitlab.kordlib.core.entity.Role
-import com.gitlab.kordlib.core.entity.channel.Channel
+import dev.kord.core.entity.Guild
+import dev.kord.core.entity.Role
+import dev.kord.core.entity.channel.Channel
 import me.jakejmattson.discordkt.api.dsl.Data
 
 data class Configuration(
@@ -16,17 +16,17 @@ data class Configuration(
     fun setup(guild: Guild, prefix: String, adminRole: Role,
               staffRole: Role, logChannel: Channel, historyChannel: Channel) {
 
-        if (guildConfigurations[guild.id.longValue] != null) return
+        if (guildConfigurations[guild.id.value] != null) return
 
         val newConfiguration = GuildConfiguration(
                 prefix,
-                adminRole.id.longValue,
-                staffRole.id.longValue,
-                logChannel.id.longValue,
-                historyChannel.id.longValue
+                adminRole.id.value,
+                staffRole.id.value,
+                logChannel.id.value,
+                historyChannel.id.value
         )
 
-        guildConfigurations[guild.id.longValue] = newConfiguration
+        guildConfigurations[guild.id.value] = newConfiguration
         save()
     }
 }

@@ -1,13 +1,14 @@
 package me.moeszyslak.logbot.services
 
-import com.gitlab.kordlib.common.entity.Snowflake
-import com.gitlab.kordlib.core.behavior.getChannelOf
-import com.gitlab.kordlib.core.behavior.channel.createMessage
-import com.gitlab.kordlib.core.entity.Guild
-import com.gitlab.kordlib.core.entity.Member
-import com.gitlab.kordlib.core.entity.User
-import com.gitlab.kordlib.core.entity.channel.TextChannel
+import dev.kord.common.entity.Snowflake
+import dev.kord.core.behavior.channel.createMessage
+import dev.kord.core.behavior.getChannelOf
+import dev.kord.core.entity.Guild
+import dev.kord.core.entity.Member
+import dev.kord.core.entity.User
+import dev.kord.core.entity.channel.TextChannel
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.toJavaInstant
 import me.jakejmattson.discordkt.api.annotations.Service
 import me.jakejmattson.discordkt.api.extensions.toSnowflake
 import me.moeszyslak.logbot.dataclasses.Configuration
@@ -32,7 +33,7 @@ class LoggerService(private val config: Configuration) {
 
      */
     fun memberJoin(guild: Guild, member: Member) = withLog(guild) {
-        "${member.descriptor()} created at ${LocalDateTime.ofInstant(member.id.timeStamp, ZoneOffset.UTC)} joined the server"
+        "${member.descriptor()} created at ${LocalDateTime.ofInstant(member.id.timeStamp.toJavaInstant(), ZoneOffset.UTC)} joined the server"
     }
 
     /*
@@ -42,7 +43,7 @@ class LoggerService(private val config: Configuration) {
      */
 
     fun memberLeave(guild: Guild, user: User) = withLog(guild) {
-        "${user.descriptor()} created at ${LocalDateTime.ofInstant(user.id.timeStamp, ZoneOffset.UTC)} left the server"
+        "${user.descriptor()} created at ${LocalDateTime.ofInstant(user.id.timeStamp.toJavaInstant(), ZoneOffset.UTC)} left the server"
     }
 
     fun voiceChannelJoin(guild: Guild, user: User, channelId: Snowflake) = withLog(guild, false) {
@@ -53,7 +54,7 @@ class LoggerService(private val config: Configuration) {
         "${user.idDescriptor()} left voice channel <#${channelId.value}>"
     }
 
-    private fun getLogConfig(guild: Guild) = config[guild.id.longValue]!!.logChannel.toSnowflake()
+    private fun getLogConfig(guild: Guild) = config[guild.id.value]!!.logChannel.toSnowflake()
 
     private suspend fun log(guild: Guild, shouldPing: Boolean, logChannelId: Snowflake, message: String) =
         guild.getChannelOf<TextChannel>(logChannelId).createMessage {
@@ -63,5 +64,6 @@ class LoggerService(private val config: Configuration) {
                 allowedMentions { }
             }
         }
+
 }
 

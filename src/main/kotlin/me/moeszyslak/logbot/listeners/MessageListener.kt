@@ -1,17 +1,18 @@
 package me.moeszyslak.logbot.listeners
 
-import com.gitlab.kordlib.common.entity.Snowflake
-import com.gitlab.kordlib.core.Kord
-import com.gitlab.kordlib.core.behavior.channel.createEmbed
-import com.gitlab.kordlib.core.entity.Role
-import com.gitlab.kordlib.core.entity.channel.TextChannel
-import com.gitlab.kordlib.core.event.message.MessageBulkDeleteEvent
-import com.gitlab.kordlib.core.event.message.MessageCreateEvent
-import com.gitlab.kordlib.core.event.message.MessageDeleteEvent
-import com.gitlab.kordlib.core.event.message.MessageUpdateEvent
+import dev.kord.common.entity.Snowflake
+import dev.kord.core.Kord
+import dev.kord.core.behavior.channel.createEmbed
+import dev.kord.core.entity.Role
+import dev.kord.core.entity.channel.TextChannel
+import dev.kord.core.event.message.MessageBulkDeleteEvent
+import dev.kord.core.event.message.MessageCreateEvent
+import dev.kord.core.event.message.MessageDeleteEvent
+import dev.kord.core.event.message.MessageUpdateEvent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toJavaInstant
 import me.jakejmattson.discordkt.api.Discord
 import me.jakejmattson.discordkt.api.dsl.listeners
 import me.jakejmattson.discordkt.api.extensions.toSnowflake
@@ -25,9 +26,9 @@ import java.time.Instant
 
 fun messageListener(configuration: Configuration, cacheService: CacheService, discord: Discord) = listeners {
     on<MessageCreateEvent> {
-        message.author!!.takeUnless { it.isBot == true } ?: return@on
+        message.author!!.takeUnless { it.isBot } ?: return@on
         val guild = getGuild() ?: return@on
-        val guildConfig = configuration[guild.id.longValue] ?: return@on
+        val guildConfig = configuration[guild.id.value] ?: return@on
 
         val prefix = guildConfig.prefix
         if (message.content.startsWith(prefix)) return@on
@@ -43,45 +44,44 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
                 message.content,
                 message.getChannel(),
                 author,
-                message.id.longValue,
-                guild.id.longValue,
-                message.timestamp,
+                message.id.value,
+                guild.id.value,
+                message.timestamp.toJavaInstant(),
                 message.attachments
         )
 
-        cacheService.addMessageToCache(guild.id.longValue, cachedMessage)
+        cacheService.addMessageToCache(guild.id.value, cachedMessage)
     }
 
     on<MessageUpdateEvent> {
-        new.author!!.takeUnless { it.bot == true } ?: return@on
-        val guildId = new.guildId?.toLongOrNull() ?: return@on
-        val guildConfig = configuration[guildId] ?: return@on
+        new.author.value.takeUnless { it!!.bot.orElse(false) } ?: return@on
+        val guildId = new.guildId.value ?: return@on
+        val guildConfig = configuration[guildId.value] ?: return@on
         if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
 
-        val guild = discord.api.getGuild(guildId.toSnowflake()) ?: return@on
-        val member = new.member ?: return@on
-        val roles = member.roles.mapNotNull { guild.getRoleOrNull(it.toSnowflake()) }
-        if (!shouldBeLogged(roles, guildConfig.ignoredRoles)) return@on
+        val guild = discord.kord.getGuild(guildId) ?: return@on
+        val member = new.member.value ?: return@on
+        if (!shouldBeLogged(member.roles.map { guild.getRole(it) }, guildConfig.ignoredRoles)) return@on
 
-        val cachedMessage = cacheService.getMessageFromCache(guildId, messageId.longValue) ?: return@on
-        val newContent = new.content ?: return@on
+        val cachedMessage = cacheService.getMessageFromCache(guildId.value, messageId.value) ?: return@on
+        val newContent = new.content.value ?: return@on
         if (cachedMessage.content == newContent) return@on
 
 
-        cacheService.removeMessageFromCache(guildId, messageId.longValue)
+        cacheService.removeMessageFromCache(guildId.value, messageId.value)
 
         val newMessage = CachedMessage(
                 newContent,
                 cachedMessage.channel,
                 cachedMessage.user,
                 cachedMessage.messageId,
-                guildId,
+                guildId.value,
                 Instant.now(),
                 cachedMessage.attachments
 
 
         )
-        cacheService.addMessageToCache(guildId, newMessage)
+        cacheService.addMessageToCache(guildId.value, newMessage)
 
         val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return@on
 
@@ -92,21 +92,15 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
 
     }
 
-    fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake) {
-        val cachedMessage = cacheService.getMessageFromCache(guildId.longValue, messageId.longValue) ?: return
-        val guildConfig = configuration[guildId.longValue] ?: return
+    suspend fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake) {
+        val cachedMessage = cacheService.getMessageFromCache(guildId.value, messageId.value) ?: return
+        val guildConfig = configuration[guildId.value] ?: return
 
         if (!guildConfig.listenerEnabled(Listener.Messages)) return
 
-        GlobalScope.launch {
-            val member = cachedMessage.user.asMemberOrNull(guildId) ?: return@launch
-            val roles = member.roles.toList()
-            if (!shouldBeLogged(roles, guildConfig.ignoredRoles)) return@launch
-
-            val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return@launch
-            channel.createEmbed {
-                createMessageDeleteEmbed(cachedMessage)
-            }
+        val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return
+        channel.createEmbed {
+            createMessageDeleteEmbed(cachedMessage)
         }
     }
 
@@ -122,5 +116,5 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
 }
 
 fun shouldBeLogged(roles: List<Role>, ignoredRoles: MutableList<Long>): Boolean {
-    return ignoredRoles.intersect(roles.map { it.id.longValue }).isEmpty()
+    return ignoredRoles.intersect(roles.map { it.id.value }).isEmpty()
 }

@@ -1,11 +1,11 @@
 package me.moeszyslak.logbot.conversations
 
-import com.gitlab.kordlib.core.entity.Guild
+import dev.kord.core.entity.Guild
 import me.jakejmattson.discordkt.api.arguments.ChannelArg
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.jakejmattson.discordkt.api.arguments.EveryArg
 import me.jakejmattson.discordkt.api.arguments.RoleArg
-import me.jakejmattson.discordkt.api.dsl.conversation
+import me.jakejmattson.discordkt.api.conversations.conversation
 
 class ConfigurationConversation(private val configuration: Configuration) {
     fun createConfigurationConversation(guild: Guild) = conversation {

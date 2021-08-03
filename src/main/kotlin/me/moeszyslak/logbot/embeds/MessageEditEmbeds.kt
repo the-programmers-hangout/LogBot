@@ -1,6 +1,7 @@
 package me.moeszyslak.logbot.embeds
 
-import com.gitlab.kordlib.rest.builder.message.EmbedBuilder
+import dev.kord.common.kColor
+import dev.kord.rest.builder.message.EmbedBuilder
 import me.moeszyslak.logbot.extensions.createContinuableField
 import me.moeszyslak.logbot.extensions.simpleDescriptor
 import me.moeszyslak.logbot.services.CachedMessage
@@ -10,7 +11,7 @@ import java.time.format.DateTimeFormatter
 
 fun EmbedBuilder.createMessageDeleteEmbed(cachedMessage: CachedMessage) {
     title = "Message Deleted"
-    color = Color.RED
+    color = Color.RED.kColor
 
     field {
         name = "User"
@@ -43,7 +44,7 @@ fun EmbedBuilder.createMessageDeleteEmbed(cachedMessage: CachedMessage) {
 
 fun EmbedBuilder.createMessageEditedEmbed(newMessage: CachedMessage, cachedMessage: CachedMessage) {
     title = "Message Edited"
-    color = Color.ORANGE
+    color = Color.ORANGE.kColor
 
     field {
         name = "User"

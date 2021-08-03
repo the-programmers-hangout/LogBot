@@ -1,17 +1,20 @@
 package me.moeszyslak.logbot
 
-import com.gitlab.kordlib.common.entity.Snowflake
-import com.gitlab.kordlib.gateway.Intent
-import com.gitlab.kordlib.gateway.Intents
-import com.gitlab.kordlib.gateway.PrivilegedIntent
+import dev.kord.common.annotation.KordPreview
+import dev.kord.common.kColor
+import dev.kord.core.supplier.EntitySupplyStrategy
+import dev.kord.gateway.Intents
+import dev.kord.gateway.PrivilegedIntent
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.services.BotStatsService
-import me.moeszyslak.logbot.services.PermissionsService
 import me.jakejmattson.discordkt.api.dsl.bot
-import me.moeszyslak.logbot.extensions.requiredPermissionLevel
+import me.jakejmattson.discordkt.api.extensions.toSnowflake
+import me.moeszyslak.logbot.dataclasses.Permissions
+import me.moeszyslak.logbot.services.DiscordCacheService
 import java.awt.Color
 
 @PrivilegedIntent
+@KordPreview
 suspend fun main() {
     val token = System.getenv("BOT_TOKEN") ?: null
     val prefix = System.getenv("DEFAULT_PREFIX") ?: "<none>"
@@ -22,25 +25,30 @@ suspend fun main() {
         prefix {
             val configuration = discord.getInjectionObjects(Configuration::class)
 
-            guild?.let { configuration[it.id.longValue]?.prefix } ?: prefix
+            guild?.let { configuration[it.id.value]?.prefix } ?: prefix
         }
 
         configure {
             theme = Color.MAGENTA
+            allowMentionPrefix = true
+            commandReaction = null
+            entitySupplyStrategy = EntitySupplyStrategy.cacheWithCachingRestFallback
+            permissions(Permissions.STAFF)
+            intents = Intents.all
         }
 
         mentionEmbed {
             val configuration = it.discord.getInjectionObjects(Configuration::class)
             val statsService = it.discord.getInjectionObjects(BotStatsService::class)
-            val guildConfiguration = configuration[it.guild!!.id.longValue]
+            val guildConfiguration = configuration[it.guild!!.id.value]
 
             title = "LogBot"
             description = "A multi-guild discord bot to log everything and everything you could ever want"
 
-            color = it.discord.configuration.theme
+            color = it.discord.configuration.theme?.kColor
 
             thumbnail {
-                url = it.discord.api.getSelf().avatar.url
+                url = it.channel.kord.getSelf().avatar.url
             }
 
             field {
@@ -56,11 +64,11 @@ suspend fun main() {
             }
 
             if (guildConfiguration != null) {
-                val adminRole = it.guild!!.getRole(Snowflake(guildConfiguration.adminRole))
-                val staffRole = it.guild!!.getRole(Snowflake(guildConfiguration.staffRole))
+                val adminRole = it.guild!!.getRole(guildConfiguration.adminRole.toSnowflake())
+                val staffRole = it.guild!!.getRole(guildConfiguration.staffRole.toSnowflake())
 
-                val loggingChannel = it.guild!!.getChannel(Snowflake(guildConfiguration.logChannel))
-                val historyChannel = it.guild!!.getChannel(Snowflake(guildConfiguration.historyChannel))
+                val loggingChannel = it.guild!!.getChannel(guildConfiguration.logChannel.toSnowflake())
+                val historyChannel = it.guild!!.getChannel(guildConfiguration.historyChannel.toSnowflake())
 
                 field {
 
@@ -100,23 +108,13 @@ suspend fun main() {
             }
         }
 
-        permissions {
-            val permissionsService = discord.getInjectionObjects(PermissionsService::class)
-            val permission = command.requiredPermissionLevel
-            if (guild != null) {
-                val member = user.asMemberOrNull(guild!!.id) ?: return@permissions false
-                permissionsService.hasClearance(member, permission)
-            } else {
-                false
+        onStart {
+            val cacheService = this.getInjectionObjects(DiscordCacheService::class)
+            try {
+                cacheService.run()
+            } catch (ex: Exception) {
+                println(ex.message)
             }
-        }
-
-        intents {
-            Intents.nonPrivileged.intents.forEach {
-                +it
-            }
-
-            +Intent.GuildMembers
         }
     }
 }

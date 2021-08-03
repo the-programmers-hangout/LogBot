@@ -7,11 +7,11 @@ import me.jakejmattson.discordkt.api.arguments.Error
 import me.jakejmattson.discordkt.api.dsl.CommandEvent
 import me.moeszyslak.logbot.dataclasses.Listener
 
-open class ListenerArg(override val name: String = "Listener"): ArgumentType<Listener>() {
+open class ListenerArg(override val name: String = "Listener", override val description: String = "A listener from the list: `${Listener.values().joinToString()}`"): ArgumentType<Listener> {
 
     companion object: ListenerArg()
 
-    override fun generateExamples(event: CommandEvent<*>): List<String> = Listener.values().toList().map { it.value }
+    override suspend fun generateExamples(event: CommandEvent<*>): List<String> = Listener.values().toList().map { it.value }
 
     override suspend fun convert(arg: String, args: List<String>, event: CommandEvent<*>): ArgumentResult<Listener> {
         val listener = Listener.values().toList().firstOrNull { it.value == arg.toLowerCase() }
