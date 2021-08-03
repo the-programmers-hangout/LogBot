@@ -23,9 +23,8 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
                 title = "Listener status"
 
                 field {
-                    value = enumValues<Listener>()
-                            .map { if (guildConfig.listenerEnabled(it)) "${Emojis.whiteCheckMark} ${it.name}" else "${Emojis.x} ${it.name}" }
-                            .joinToString("\n\n")
+                    value =
+                        enumValues<Listener>().joinToString("\n\n") { if (guildConfig.listenerEnabled(it)) "${Emojis.whiteCheckMark} ${it.name}" else "${Emojis.x} ${it.name}" }
                 }
 
             }

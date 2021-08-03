@@ -46,5 +46,6 @@ data class GuildConfiguration(
 enum class Listener(val value: String) {
     Members("members"),
     Messages("messages"),
-    Voice("voice")
+    Voice("voice"),
+    Reactions("reactions")
 }

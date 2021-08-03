@@ -18,8 +18,13 @@ fun voiceListener(loggerService: LoggerService, configuration: Configuration) = 
             val channelId = left.channelId ?: return@on
 
             loggerService.voiceChannelLeave(guild, left.getMember(), channelId)
+
         } else if (state.channelId != old?.channelId) {
             val channelId = state.channelId ?: return@on
+
+            if (old?.channelId != null) {
+                loggerService.voiceChannelLeave(guild, old!!.getMember(), channelId)
+            }
 
             loggerService.voiceChannelJoin(guild, state.getMember(), channelId)
         }

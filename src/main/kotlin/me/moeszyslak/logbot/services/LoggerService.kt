@@ -1,11 +1,11 @@
 package me.moeszyslak.logbot.services
 
 import dev.kord.common.entity.Snowflake
+import dev.kord.core.behavior.MessageBehavior
+import dev.kord.core.behavior.channel.MessageChannelBehavior
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.getChannelOf
-import dev.kord.core.entity.Guild
-import dev.kord.core.entity.Member
-import dev.kord.core.entity.User
+import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.TextChannel
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.toJavaInstant
@@ -29,29 +29,44 @@ class LoggerService(private val config: Configuration) {
 
     /*
 
-        MemberJoinEvent
+        Member Join/Leave Events
 
      */
     fun memberJoin(guild: Guild, member: Member) = withLog(guild) {
         "${member.descriptor()} created at ${LocalDateTime.ofInstant(member.id.timeStamp.toJavaInstant(), ZoneOffset.UTC)} joined the server"
     }
 
-    /*
-
-        MemberLeaveEvent
-
-     */
-
     fun memberLeave(guild: Guild, user: User) = withLog(guild) {
         "${user.descriptor()} created at ${LocalDateTime.ofInstant(user.id.timeStamp.toJavaInstant(), ZoneOffset.UTC)} left the server"
     }
 
+
+    /*
+
+        Voice Channel Events
+
+
+     */
     fun voiceChannelJoin(guild: Guild, user: User, channelId: Snowflake) = withLog(guild, false) {
         "${user.idDescriptor()} joined voice channel <#${channelId.value}>"
     }
 
     fun voiceChannelLeave(guild: Guild, user: User, channelId: Snowflake) = withLog(guild, false) {
         "${user.idDescriptor()} left voice channel <#${channelId.value}>"
+    }
+
+    /*
+
+        Reaction Events
+
+     */
+
+    fun reactionAdd(guild: Guild, reaction: ReactionEmoji, member: Member, channel: MessageChannelBehavior, jumpUrl: String) = withLog(guild, false) {
+        "${member.idDescriptor()} added reaction ${reaction.mention} in ${channel.mention} :: $jumpUrl"
+    }
+
+    fun reactionRemove(guild: Guild, reaction: ReactionEmoji, member: Member, channel: MessageChannelBehavior, jumpUrl: String) = withLog(guild, false) {
+        "${member.idDescriptor()} removed reaction ${reaction.mention} in ${channel.mention} :: $jumpUrl"
     }
 
     private fun getLogConfig(guild: Guild) = config[guild.id.value]!!.logChannel.toSnowflake()

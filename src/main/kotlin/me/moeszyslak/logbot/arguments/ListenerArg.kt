@@ -14,7 +14,7 @@ open class ListenerArg(override val name: String = "Listener", override val desc
     override suspend fun generateExamples(event: CommandEvent<*>): List<String> = Listener.values().toList().map { it.value }
 
     override suspend fun convert(arg: String, args: List<String>, event: CommandEvent<*>): ArgumentResult<Listener> {
-        val listener = Listener.values().toList().firstOrNull { it.value == arg.toLowerCase() }
+        val listener = Listener.values().toList().firstOrNull { it.value == arg.lowercase() }
 
         return if (listener != null) {
             Success(listener)
