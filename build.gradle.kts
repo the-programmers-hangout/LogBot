@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation("me.jakejmattson:DiscordKt:${Versions.DISCORDKT}")
     implementation("com.google.guava:guava:30.0-jre")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
 }
 
 tasks {
