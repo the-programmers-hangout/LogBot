@@ -94,7 +94,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
 
     }
 
-    suspend fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake) {
+    fun logMessageDelete(kord: Kord, guildId: Snowflake, messageId: Snowflake) {
         val cachedMessage = cacheService.getMessageFromCache(guildId.value, messageId.value) ?: return
         val guildConfig = configuration[guildId.value] ?: return
 
