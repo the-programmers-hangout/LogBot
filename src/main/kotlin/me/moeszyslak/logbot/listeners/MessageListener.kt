@@ -9,6 +9,7 @@ import dev.kord.core.event.message.MessageBulkDeleteEvent
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.event.message.MessageDeleteEvent
 import dev.kord.core.event.message.MessageUpdateEvent
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ import me.moeszyslak.logbot.services.CacheService
 import me.moeszyslak.logbot.services.CachedMessage
 import java.time.Instant
 
+@DelicateCoroutinesApi
 fun messageListener(configuration: Configuration, cacheService: CacheService, discord: Discord) = listeners {
     on<MessageCreateEvent> {
         message.author!!.takeUnless { it.isBot } ?: return@on
@@ -98,10 +100,13 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
 
         if (!guildConfig.listenerEnabled(Listener.Messages)) return
 
-        val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return
-        channel.createEmbed {
-            createMessageDeleteEmbed(cachedMessage)
+        GlobalScope.launch {
+            val channel = kord.getChannelOf<TextChannel>(guildConfig.historyChannel.toSnowflake()) ?: return@launch
+            channel.createEmbed {
+                createMessageDeleteEmbed(cachedMessage)
+            }
         }
+
     }
 
     on<MessageDeleteEvent> {
