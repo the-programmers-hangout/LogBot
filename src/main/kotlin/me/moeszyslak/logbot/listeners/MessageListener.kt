@@ -27,13 +27,15 @@ import java.time.Instant
 
 @DelicateCoroutinesApi
 fun messageListener(configuration: Configuration, cacheService: CacheService, discord: Discord) = listeners {
+
     on<MessageCreateEvent> {
-        message.author!!.takeUnless { it.isBot } ?: return@on
+        message.author?.takeUnless { it.isBot } ?: return@on
         val guild = getGuild() ?: return@on
         val guildConfig = configuration[guild.id.value] ?: return@on
 
         val prefix = guildConfig.prefix
         if (message.content.startsWith(prefix)) return@on
+        if (message.content.isEmpty()) return@on
 
         if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
 
@@ -56,9 +58,11 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
     }
 
     on<MessageUpdateEvent> {
-        new.author.value.takeUnless { it!!.bot.orElse(false) } ?: return@on
+        old?.author?.takeUnless { it.isBot } ?: return@on
         val guildId = new.guildId.value ?: return@on
         val guildConfig = configuration[guildId.value] ?: return@on
+        val newContent = new.content.value ?: return@on
+        if (newContent.isEmpty()) return@on
         if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
 
         val guild = discord.kord.getGuild(guildId) ?: return@on
@@ -66,7 +70,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
         if (!shouldBeLogged(member.roles.map { guild.getRole(it) }, guildConfig.ignoredRoles)) return@on
 
         val cachedMessage = cacheService.getMessageFromCache(guildId.value, messageId.value) ?: return@on
-        val newContent = new.content.value ?: return@on
+//
         if (cachedMessage.content == newContent) return@on
 
 

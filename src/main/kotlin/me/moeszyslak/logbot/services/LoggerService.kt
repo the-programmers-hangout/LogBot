@@ -7,6 +7,7 @@ import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.getChannelOf
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.TextChannel
+import dev.kord.rest.builder.message.create.allowedMentions
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.toJavaInstant
 import me.jakejmattson.discordkt.api.annotations.Service
