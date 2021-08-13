@@ -1,14 +1,11 @@
 package me.moeszyslak.logbot.arguments
 
-import me.jakejmattson.discordkt.api.arguments.ArgumentResult
-import me.jakejmattson.discordkt.api.arguments.ArgumentType
-import me.jakejmattson.discordkt.api.arguments.Success
-import me.jakejmattson.discordkt.api.arguments.Error
-import me.jakejmattson.discordkt.api.dsl.CommandEvent
+import me.jakejmattson.discordkt.api.arguments.*
+import me.jakejmattson.discordkt.api.commands.CommandEvent
 import me.moeszyslak.logbot.dataclasses.Listener
 
 open class ListenerArg(override val name: String = "Listener", override val description: String = "A listener from the list: `${Listener.values().joinToString()}`"):
-    ArgumentType<Listener> {
+    Argument<Listener> {
 
     companion object: ListenerArg()
 

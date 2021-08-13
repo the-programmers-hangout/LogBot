@@ -4,7 +4,7 @@ import me.moeszyslak.logbot.conversations.ConfigurationConversation
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.jakejmattson.discordkt.api.arguments.EveryArg
 import me.jakejmattson.discordkt.api.arguments.RoleArg
-import me.jakejmattson.discordkt.api.dsl.commands
+import me.jakejmattson.discordkt.api.commands.commands
 import me.moeszyslak.logbot.dataclasses.Permissions
 
 fun guildConfigCommands(configuration: Configuration) = commands("Configuration") {

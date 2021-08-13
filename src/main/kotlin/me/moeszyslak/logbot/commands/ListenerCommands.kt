@@ -5,7 +5,7 @@ import dev.kord.common.kColor
 import dev.kord.x.emoji.Emojis
 import me.jakejmattson.discordkt.api.arguments.ChoiceArg
 import me.jakejmattson.discordkt.api.arguments.RoleArg
-import me.jakejmattson.discordkt.api.dsl.commands
+import me.jakejmattson.discordkt.api.commands.commands
 import me.moeszyslak.logbot.arguments.ListenerArg
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.dataclasses.Listener
