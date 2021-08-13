@@ -7,7 +7,8 @@ import me.jakejmattson.discordkt.api.arguments.Error
 import me.jakejmattson.discordkt.api.dsl.CommandEvent
 import me.moeszyslak.logbot.dataclasses.Listener
 
-open class ListenerArg(override val name: String = "Listener", override val description: String = "A listener from the list: `${Listener.values().joinToString()}`"): ArgumentType<Listener> {
+open class ListenerArg(override val name: String = "Listener", override val description: String = "A listener from the list: `${Listener.values().joinToString()}`"):
+    ArgumentType<Listener> {
 
     companion object: ListenerArg()
 
