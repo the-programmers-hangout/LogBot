@@ -32,7 +32,7 @@ suspend fun main() {
             theme = Color.MAGENTA
             allowMentionPrefix = true
             commandReaction = null
-            entitySupplyStrategy = EntitySupplyStrategy.cacheWithCachingRestFallback
+            entitySupplyStrategy = EntitySupplyStrategy.cacheWithRestFallback
             permissions(Permissions.STAFF)
             intents = Intents.all
         }
