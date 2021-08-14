@@ -58,7 +58,6 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
     }
 
     on<MessageUpdateEvent> {
-        old?.author?.takeUnless { it.isBot } ?: return@on
         val guildId = new.guildId.value ?: return@on
         val guildConfig = configuration[guildId.value] ?: return@on
         val newContent = new.content.value ?: return@on
