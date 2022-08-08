@@ -10,11 +10,9 @@ import me.moeszyslak.logbot.dataclasses.Configuration
 class ConfigurationConversation(private val configuration: Configuration) {
     fun createConfigurationConversation(guild: Guild) = conversation {
         val prefix = prompt(EveryArg, "Bot prefix:")
-        val adminRole = prompt(RoleArg, "Admin role:")
-        val staffRole = prompt(RoleArg, "Staff role:")
         val logChannel = prompt(ChannelArg, "Logging channel:")
         val historyChannel = prompt(ChannelArg, "History channel:")
 
-        configuration.setup(guild, prefix, adminRole, staffRole, logChannel, historyChannel)
+        configuration.setup(guild, prefix, logChannel, historyChannel)
     }
 }

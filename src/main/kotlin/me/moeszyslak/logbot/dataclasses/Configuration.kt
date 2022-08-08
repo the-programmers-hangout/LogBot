@@ -8,21 +8,15 @@ import kotlinx.serialization.Serializable
 import me.jakejmattson.discordkt.dsl.Data
 
 @Serializable
-data class Configuration(val botOwner: Long = 345541952500006912,
-                         val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) : Data() {
+data class Configuration(val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) : Data() {
 
     operator fun get(id: Snowflake) = guildConfigurations[id]
 
     fun hasGuildConfig(guildId: Snowflake) = guildConfigurations.containsKey(guildId)
 
-    fun setup(guild: Guild, prefix: String, adminRole: Role,
-              staffRole: Role, logChannel: Channel, historyChannel: Channel) {
-
+    fun setup(guild: Guild, prefix: String, logChannel: Channel, historyChannel: Channel) {
         if (guildConfigurations[guild.id] != null) return
-
-        val newConfiguration = GuildConfiguration(prefix, adminRole.id, staffRole.id, logChannel.id, historyChannel.id)
-
-        guildConfigurations[guild.id] = newConfiguration
+        guildConfigurations[guild.id] = GuildConfiguration(prefix, logChannel.id, historyChannel.id)
         save()
     }
 }
@@ -30,8 +24,6 @@ data class Configuration(val botOwner: Long = 345541952500006912,
 @Serializable
 data class GuildConfiguration(
     var prefix: String,
-    var adminRole: Snowflake,
-    var staffRole: Snowflake,
     var logChannel: Snowflake,
     var historyChannel: Snowflake,
     var listeners: MutableMap<Listener, Boolean> = mutableMapOf(),

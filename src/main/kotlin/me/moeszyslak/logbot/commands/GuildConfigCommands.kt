@@ -37,32 +37,4 @@ fun guildConfigCommands(configuration: Configuration) = commands("Configuration"
             respond("Prefix set to: **$prefix**")
         }
     }
-
-    text("StaffRole") {
-        description = "Set the bot staff role."
-        execute(RoleArg) {
-            if (!configuration.hasGuildConfig(guild.id)) {
-                respond("Please run the **configure** command to set this initially.")
-                return@execute
-            }
-            val role = args.first
-            configuration[guild.id]?.staffRole = role.id
-            configuration.save()
-            respond("Role set to: **${role.name}**")
-        }
-    }
-
-    text("AdminRole") {
-        description = "Set the bot admin role."
-        execute(RoleArg) {
-            if (!configuration.hasGuildConfig(guild.id)) {
-                respond("Please run the **configure** command to set this initially.")
-                return@execute
-            }
-            val role = args.first
-            configuration[guild.id]?.adminRole = role.id
-            configuration.save()
-            respond("Role set to: **${role.name}**")
-        }
-    }
 }
