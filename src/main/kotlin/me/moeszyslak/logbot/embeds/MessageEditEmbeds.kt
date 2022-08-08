@@ -60,7 +60,7 @@ fun EmbedBuilder.createMessageEditedEmbed(newMessage: CachedMessage, cachedMessa
 
     field {
         name = "Link"
-        value = "[Jump To](https://discord.com/channels/${cachedMessage.guildId}/${cachedMessage.channel.id.value}/${cachedMessage.messageId})"
+        value = "[Jump To](https://discord.com/channels/${cachedMessage.guildId}/${cachedMessage.channel.id}/${cachedMessage.messageId})"
         inline = true
     }
 

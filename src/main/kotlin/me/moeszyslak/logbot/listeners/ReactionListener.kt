@@ -4,8 +4,8 @@ import dev.kord.core.entity.Guild
 import dev.kord.core.entity.Member
 import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
-import me.jakejmattson.discordkt.api.dsl.listeners
-import me.jakejmattson.discordkt.api.extensions.jumpLink
+import me.jakejmattson.discordkt.dsl.listeners
+import me.jakejmattson.discordkt.extensions.jumpLink
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.dataclasses.Listener
 import me.moeszyslak.logbot.services.LoggerService
@@ -15,7 +15,7 @@ fun reactionListener(loggerService: LoggerService, configuration: Configuration)
         val guild = getGuild() ?: return@on
         val member = guild.getMemberOrNull(userId) ?: return@on
 
-        val guildConfig = configuration[guild.id.value] ?: return@on
+        val guildConfig = configuration[guild.id] ?: return@on
         if (!guildConfig.listenerEnabled(Listener.Reactions)) return@on
 
         val jumpUrl = message.asMessage().jumpLink() ?: return@on
@@ -26,7 +26,7 @@ fun reactionListener(loggerService: LoggerService, configuration: Configuration)
         val guild = getGuild() ?: return@on
         val member = guild.getMemberOrNull(userId) ?: return@on
 
-        val guildConfig = configuration[guild.id.value] ?: return@on
+        val guildConfig = configuration[guild.id] ?: return@on
         if (!guildConfig.listenerEnabled(Listener.Reactions)) return@on
 
         val jumpUrl = message.asMessage().jumpLink() ?: return@on

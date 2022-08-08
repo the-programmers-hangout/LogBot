@@ -1,15 +1,17 @@
 package me.moeszyslak.logbot
 
 import dev.kord.common.annotation.KordPreview
-import dev.kord.common.kColor
+import dev.kord.common.entity.Permission
+import dev.kord.common.entity.Permissions
 import dev.kord.core.supplier.EntitySupplyStrategy
 import dev.kord.gateway.Intents
 import dev.kord.gateway.PrivilegedIntent
+import me.jakejmattson.discordkt.dsl.bot
+import me.jakejmattson.discordkt.extensions.addInlineField
+import me.jakejmattson.discordkt.extensions.pfpUrl
+import me.jakejmattson.discordkt.extensions.thumbnail
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.services.BotStatsService
-import me.jakejmattson.discordkt.api.dsl.bot
-import me.jakejmattson.discordkt.api.extensions.toSnowflake
-import me.moeszyslak.logbot.dataclasses.Permissions
 import me.moeszyslak.logbot.services.DiscordCacheService
 import java.awt.Color
 
@@ -22,90 +24,63 @@ suspend fun main() {
     require(token != null) { "Expected the bot token as an environment variable" }
 
     bot(token) {
-        prefix {
-            val configuration = discord.getInjectionObjects(Configuration::class)
+        val configuration = data("config/config.json") { Configuration() }
 
-            guild?.let { configuration[it.id.value]?.prefix } ?: prefix
+        prefix {
+            guild?.let { configuration[it.id]?.prefix } ?: prefix
         }
 
         configure {
             theme = Color.MAGENTA
-            allowMentionPrefix = true
+            mentionAsPrefix = true
             commandReaction = null
             entitySupplyStrategy = EntitySupplyStrategy.cacheWithRestFallback
-            permissions(Permissions.STAFF)
+            defaultPermissions = Permissions(Permission.ManageMessages)
             intents = Intents.all
         }
 
         mentionEmbed {
-            val configuration = it.discord.getInjectionObjects(Configuration::class)
             val statsService = it.discord.getInjectionObjects(BotStatsService::class)
-            val guildConfiguration = configuration[it.guild!!.id.value]
+            val guildConfiguration = configuration[it.guild!!.id]
 
             title = "LogBot"
             description = "A multi-guild discord bot to log everything and everything you could ever want"
-
-            color = it.discord.configuration.theme?.kColor
-
-            thumbnail {
-                url = it.channel.kord.getSelf().avatar.url
-            }
-
-            field {
-                name = "Prefix"
-                value = it.prefix()
-                inline = true
-            }
-
-            field {
-                name = "Ping"
-                value = statsService.ping
-                inline = true
-            }
+            color = it.discord.configuration.theme
+            thumbnail(it.channel.kord.getSelf().pfpUrl)
+            addInlineField("Prefix", it.prefix())
+            addInlineField("Ping", statsService.ping)
 
             if (guildConfiguration != null) {
-                val adminRole = it.guild!!.getRole(guildConfiguration.adminRole.toSnowflake())
-                val staffRole = it.guild!!.getRole(guildConfiguration.staffRole.toSnowflake())
-
-                val loggingChannel = it.guild!!.getChannel(guildConfiguration.logChannel.toSnowflake())
-                val historyChannel = it.guild!!.getChannel(guildConfiguration.historyChannel.toSnowflake())
+                val adminRole = it.guild!!.getRole(guildConfiguration.adminRole)
+                val staffRole = it.guild!!.getRole(guildConfiguration.staffRole)
+                val loggingChannel = it.guild!!.getChannel(guildConfiguration.logChannel)
+                val historyChannel = it.guild!!.getChannel(guildConfiguration.historyChannel)
 
                 field {
-
                     name = "Configuration"
                     value = "```" +
-                            "Admin Role: ${adminRole.name}\n" +
-                            "Staff Role: ${staffRole.name}\n" +
-                            "Logging Channel: ${loggingChannel.name}\n" +
-                            "History Channel: ${historyChannel.name}" +
-                            "```"
+                        "Admin Role: ${adminRole.name}\n" +
+                        "Staff Role: ${staffRole.name}\n" +
+                        "Logging Channel: ${loggingChannel.name}\n" +
+                        "History Channel: ${historyChannel.name}" +
+                        "```"
                 }
             }
-
 
             field {
                 val versions = it.discord.versions
 
                 name = "Bot Info"
                 value = "```" +
-                        "Version: 1.4.2\n" +
-                        "DiscordKt: ${versions.library}\n" +
-                        "Kord: ${versions.kord}\n" +
-                        "Kotlin: ${versions.kotlin}" +
-                        "```"
+                    "Version: 1.4.2\n" +
+                    "DiscordKt: ${versions.library}\n" +
+                    "Kord: ${versions.kord}\n" +
+                    "Kotlin: ${versions.kotlin}" +
+                    "```"
             }
 
-            field {
-                name = "Uptime"
-                value = statsService.uptime
-                inline = true
-            }
-
-            field {
-                name = "Source"
-                value = "[GitHub](https://github.com/the-programmers-hangout/LogBot)"
-                inline = true
-            }
+            addInlineField("Uptime", statsService.uptime)
+            addInlineField("Source", "[GitHub](https://github.com/the-programmers-hangout/LogBot)")
         }
 
         onStart {

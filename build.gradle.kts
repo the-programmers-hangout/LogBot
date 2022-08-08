@@ -3,23 +3,20 @@ version = Versions.BOT
 description = "A multi-guild discord bot to log everything and everything you could ever want"
 
 plugins {
-    kotlin("jvm") version "1.5.21"
+    kotlin("jvm") version "1.7.10"
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 repositories {
     mavenCentral()
-    maven("https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
     implementation("me.jakejmattson:DiscordKt:${Versions.DISCORDKT}")
     implementation("com.google.guava:guava:30.0-jre")
-    implementation("org.slf4j:slf4j-simple:1.7.30")
 }
 
 tasks {
-
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
@@ -28,7 +25,7 @@ tasks {
         archiveFileName.set("LogBot.jar")
         manifest {
             attributes(
-                    "Main-Class" to "me.moeszyslak.logbot.MainKt"
+                "Main-Class" to "me.moeszyslak.logbot.MainKt"
             )
         }
     }
@@ -36,5 +33,5 @@ tasks {
 
 object Versions {
     const val BOT = "1.0.0"
-    const val DISCORDKT = "0.23.0-SNAPSHOT"
+    const val DISCORDKT = "0.23.2"
 }

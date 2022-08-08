@@ -1,7 +1,7 @@
 package me.moeszyslak.logbot.listeners
 
 import dev.kord.core.event.user.VoiceStateUpdateEvent
-import me.jakejmattson.discordkt.api.dsl.listeners
+import me.jakejmattson.discordkt.dsl.listeners
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.dataclasses.Listener
 import me.moeszyslak.logbot.services.LoggerService
@@ -10,7 +10,7 @@ fun voiceListener(loggerService: LoggerService, configuration: Configuration) = 
     on<VoiceStateUpdateEvent> {
         val guild = state.getGuild()
 
-        val guildConfig = configuration[guild.id.value] ?: return@on
+        val guildConfig = configuration[guild.id] ?: return@on
         if (!guildConfig.listenerEnabled(Listener.Voice)) return@on
 
         if (state.channelId == null) {

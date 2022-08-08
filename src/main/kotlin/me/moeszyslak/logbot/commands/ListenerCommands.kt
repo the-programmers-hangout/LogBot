@@ -1,23 +1,21 @@
 package me.moeszyslak.logbot.commands
 
-import dev.kord.common.entity.Snowflake
+import dev.kord.common.entity.Permission
+import dev.kord.common.entity.Permissions
 import dev.kord.common.kColor
 import dev.kord.x.emoji.Emojis
-import me.jakejmattson.discordkt.api.arguments.ChoiceArg
-import me.jakejmattson.discordkt.api.arguments.RoleArg
-import me.jakejmattson.discordkt.api.commands.commands
-import me.moeszyslak.logbot.arguments.ListenerArg
+import me.jakejmattson.discordkt.arguments.ChoiceArg
+import me.jakejmattson.discordkt.arguments.RoleArg
+import me.jakejmattson.discordkt.commands.commands
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.dataclasses.Listener
-import me.moeszyslak.logbot.dataclasses.Permissions
 import java.awt.Color
 
-fun listenerCommands(configuration: Configuration) = commands("Listeners") {
-    guildCommand("Status") {
+fun listenerCommands(configuration: Configuration) = commands("Listeners", Permissions(Permission.ManageMessages)) {
+    text("Status") {
         description = "List all listeners and their current status."
-        requiredPermission = Permissions.STAFF
         execute {
-            val guildConfig = configuration[guild.id.value] ?: return@execute
+            val guildConfig = configuration[guild.id] ?: return@execute
 
             respond {
                 title = "Listener status"
@@ -31,13 +29,12 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
         }
     }
 
-    guildCommand("Toggle") {
+    text("Toggle") {
         description = "Toggle listener"
-        requiredPermission = Permissions.STAFF
-        execute(ListenerArg) {
+        execute(ChoiceArg("Listener", "The listener to toggle", *Listener.values())) {
             val listener = args.first
 
-            val guildConfig = configuration[guild.id.value] ?: return@execute
+            val guildConfig = configuration[guild.id] ?: return@execute
 
             guildConfig.listeners[listener] = !guildConfig.listenerEnabled(listener)
             configuration.save()
@@ -47,14 +44,13 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
         }
     }
 
-    guildCommand("IgnoreList") {
+    text("IgnoreList") {
         description = "List ignored roles and add/remove roles from the exclusion list"
-        requiredPermission = Permissions.STAFF
         execute(ChoiceArg("add/remove/list", "add", "remove", "list").optional("list"),
                 RoleArg.optionalNullable(null)) {
 
             val (choice, role) = args
-            val config = configuration[(guild.id.value)] ?: return@execute
+            val config = configuration[guild.id] ?: return@execute
 
             when (choice) {
                 "add" -> {
@@ -64,12 +60,12 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
                         return@execute
                     }
 
-                    if (config.ignoredRoles.contains(role.id.value)) {
+                    if (config.ignoredRoles.contains(role.id)) {
                         respond("${role.name} is already being ignored")
                         return@execute
                     }
 
-                    config.ignoredRoles.add(role.id.value)
+                    config.ignoredRoles.add(role.id)
                     configuration.save()
 
                     respond("${role.name} added to the ignore list")
@@ -82,12 +78,12 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
                         return@execute
                     }
 
-                    if (!config.ignoredRoles.contains(role.id.value)) {
+                    if (!config.ignoredRoles.contains(role.id)) {
                         respond("${role.name} is not being ignored")
                         return@execute
                     }
 
-                    config.ignoredRoles.remove(role.id.value)
+                    config.ignoredRoles.remove(role.id)
                     configuration.save()
 
                     respond("${role.name} removed from the ignore list")
@@ -105,7 +101,7 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners") {
                         } else {
                             color = Color(0xDB5F96).kColor
                             val roles = config.ignoredRoles.map { ignoredRole ->
-                                guild.getRole(Snowflake(ignoredRole)).mention
+                                guild.getRole(ignoredRole).mention
                             }
 
                             field {
