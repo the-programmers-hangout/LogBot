@@ -4,8 +4,10 @@ import dev.kord.common.entity.Snowflake
 import dev.kord.core.entity.Guild
 import dev.kord.core.entity.Role
 import dev.kord.core.entity.channel.Channel
+import kotlinx.serialization.Serializable
 import me.jakejmattson.discordkt.dsl.Data
 
+@Serializable
 data class Configuration(val botOwner: Long = 345541952500006912,
                          val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) : Data() {
 
@@ -25,6 +27,7 @@ data class Configuration(val botOwner: Long = 345541952500006912,
     }
 }
 
+@Serializable
 data class GuildConfiguration(
     var prefix: String,
     var adminRole: Snowflake,

@@ -1,7 +1,6 @@
 package me.moeszyslak.logbot.services
 
 import dev.kord.common.entity.Snowflake
-import dev.kord.core.behavior.MessageBehavior
 import dev.kord.core.behavior.channel.MessageChannelBehavior
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.getChannelOf
@@ -11,22 +10,20 @@ import dev.kord.rest.builder.message.create.allowedMentions
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.toJavaInstant
 import me.jakejmattson.discordkt.annotations.Service
-import me.jakejmattson.discordkt.extensions.toSnowflake
+import me.jakejmattson.discordkt.extensions.descriptor
+import me.jakejmattson.discordkt.extensions.idDescriptor
 import me.moeszyslak.logbot.dataclasses.Configuration
-import me.moeszyslak.logbot.extensions.descriptor
-import me.moeszyslak.logbot.extensions.idDescriptor
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Service
 class LoggerService(private val config: Configuration) {
     private fun withLog(guild: Guild, shouldPing: Boolean = true, f: () -> String) =
-            getLogConfig(guild).apply {
-                runBlocking {
-                    log(guild, shouldPing, getLogConfig(guild), f())
-                }
+        getLogConfig(guild).apply {
+            runBlocking {
+                log(guild, shouldPing, getLogConfig(guild), f())
             }
-
+        }
 
     /*
 
@@ -40,7 +37,6 @@ class LoggerService(private val config: Configuration) {
     fun memberLeave(guild: Guild, user: User) = withLog(guild) {
         "${user.descriptor()} created at ${LocalDateTime.ofInstant(user.id.timestamp.toJavaInstant(), ZoneOffset.UTC)} left the server"
     }
-
 
     /*
 

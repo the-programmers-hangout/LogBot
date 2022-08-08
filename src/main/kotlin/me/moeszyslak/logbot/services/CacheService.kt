@@ -8,8 +8,8 @@ import dev.kord.core.entity.User
 import dev.kord.core.entity.channel.Channel
 import me.jakejmattson.discordkt.annotations.Service
 import java.time.Instant
-import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 data class CachedMessage(
     val content: String,

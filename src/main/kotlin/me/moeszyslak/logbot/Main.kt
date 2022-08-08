@@ -4,16 +4,16 @@ import dev.kord.common.annotation.KordPreview
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Permissions
 import dev.kord.core.supplier.EntitySupplyStrategy
-import dev.kord.gateway.Intents
+import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import me.jakejmattson.discordkt.dsl.bot
-import me.jakejmattson.discordkt.extensions.addInlineField
-import me.jakejmattson.discordkt.extensions.pfpUrl
-import me.jakejmattson.discordkt.extensions.thumbnail
+import me.jakejmattson.discordkt.extensions.*
 import me.moeszyslak.logbot.dataclasses.Configuration
-import me.moeszyslak.logbot.services.BotStatsService
 import me.moeszyslak.logbot.services.DiscordCacheService
 import java.awt.Color
+import java.time.Instant
+
+private val startup = Instant.now()
 
 @PrivilegedIntent
 @KordPreview
@@ -36,51 +36,22 @@ suspend fun main() {
             commandReaction = null
             entitySupplyStrategy = EntitySupplyStrategy.cacheWithRestFallback
             defaultPermissions = Permissions(Permission.ManageMessages)
-            intents = Intents.all
+            intents = Intent.GuildMembers + Intent.GuildVoiceStates + Intent.GuildMessageReactions + Intent.DirectMessagesReactions
         }
 
         mentionEmbed {
-            val statsService = it.discord.getInjectionObjects(BotStatsService::class)
             val guildConfiguration = configuration[it.guild!!.id]
 
-            title = "LogBot"
+            title = "LogBot 1.4.2"
             description = "A multi-guild discord bot to log everything and everything you could ever want"
             color = it.discord.configuration.theme
-            thumbnail(it.channel.kord.getSelf().pfpUrl)
-            addInlineField("Prefix", it.prefix())
-            addInlineField("Ping", statsService.ping)
-
-            if (guildConfiguration != null) {
-                val adminRole = it.guild!!.getRole(guildConfiguration.adminRole)
-                val staffRole = it.guild!!.getRole(guildConfiguration.staffRole)
-                val loggingChannel = it.guild!!.getChannel(guildConfiguration.logChannel)
-                val historyChannel = it.guild!!.getChannel(guildConfiguration.historyChannel)
-
-                field {
-                    name = "Configuration"
-                    value = "```" +
-                        "Admin Role: ${adminRole.name}\n" +
-                        "Staff Role: ${staffRole.name}\n" +
-                        "Logging Channel: ${loggingChannel.name}\n" +
-                        "History Channel: ${historyChannel.name}" +
-                        "```"
-                }
-            }
-
-            field {
-                val versions = it.discord.versions
-
-                name = "Bot Info"
-                value = "```" +
-                    "Version: 1.4.2\n" +
-                    "DiscordKt: ${versions.library}\n" +
-                    "Kord: ${versions.kord}\n" +
-                    "Kotlin: ${versions.kotlin}" +
-                    "```"
-            }
-
-            addInlineField("Uptime", statsService.uptime)
+            thumbnail(it.discord.kord.getSelf().pfpUrl)
             addInlineField("Source", "[GitHub](https://github.com/the-programmers-hangout/LogBot)")
+            addInlineField("Ping", it.discord.kord.gateway.averagePing?.toString() ?: "Unknown")
+            addInlineField("Startup", TimeStamp.at(startup, TimeStyle.RELATIVE))
+            addInlineField("Logging", "<#${guildConfiguration?.logChannel}>")
+            addInlineField("History", "<#${guildConfiguration?.historyChannel}>")
+            footer(it.discord.versions.toString())
         }
 
         onStart {

@@ -4,7 +4,6 @@ import dev.kord.core.supplier.EntitySupplyStrategy
 import kotlinx.coroutines.flow.toList
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
-import me.jakejmattson.discordkt.extensions.toSnowflake
 import me.moeszyslak.logbot.dataclasses.Configuration
 
 @Service

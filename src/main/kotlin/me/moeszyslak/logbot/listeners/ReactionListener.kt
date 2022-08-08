@@ -1,7 +1,5 @@
 package me.moeszyslak.logbot.listeners
 
-import dev.kord.core.entity.Guild
-import dev.kord.core.entity.Member
 import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
 import me.jakejmattson.discordkt.dsl.listeners

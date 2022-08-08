@@ -2,11 +2,11 @@ package me.moeszyslak.logbot.commands
 
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Permissions
-import me.moeszyslak.logbot.conversations.ConfigurationConversation
-import me.moeszyslak.logbot.dataclasses.Configuration
 import me.jakejmattson.discordkt.arguments.EveryArg
 import me.jakejmattson.discordkt.arguments.RoleArg
 import me.jakejmattson.discordkt.commands.commands
+import me.moeszyslak.logbot.conversations.ConfigurationConversation
+import me.moeszyslak.logbot.dataclasses.Configuration
 
 fun guildConfigCommands(configuration: Configuration) = commands("Configuration", Permissions(Permission.Administrator)) {
     text("Setup") {
@@ -17,8 +17,8 @@ fun guildConfigCommands(configuration: Configuration) = commands("Configuration"
                 return@execute
             }
             ConfigurationConversation(configuration)
-                    .createConfigurationConversation(guild)
-                    .startPublicly(discord, author, channel)
+                .createConfigurationConversation(guild)
+                .startPublicly(discord, author, channel)
 
             respond("${guild.name} has been setup")
         }

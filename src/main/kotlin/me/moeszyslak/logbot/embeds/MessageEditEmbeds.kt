@@ -2,8 +2,8 @@ package me.moeszyslak.logbot.embeds
 
 import dev.kord.common.kColor
 import dev.kord.rest.builder.message.EmbedBuilder
+import me.jakejmattson.discordkt.extensions.simpleDescriptor
 import me.moeszyslak.logbot.extensions.createContinuableField
-import me.moeszyslak.logbot.extensions.simpleDescriptor
 import me.moeszyslak.logbot.services.CachedMessage
 import java.awt.Color
 import java.time.ZoneOffset

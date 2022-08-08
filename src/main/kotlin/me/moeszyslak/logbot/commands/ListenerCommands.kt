@@ -47,7 +47,7 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners", Permi
     text("IgnoreList") {
         description = "List ignored roles and add/remove roles from the exclusion list"
         execute(ChoiceArg("add/remove/list", "add", "remove", "list").optional("list"),
-                RoleArg.optionalNullable(null)) {
+            RoleArg.optionalNullable(null)) {
 
             val (choice, role) = args
             val config = configuration[guild.id] ?: return@execute
