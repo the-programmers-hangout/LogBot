@@ -23,7 +23,6 @@ data class CachedMessage(
 
 @Service
 class CacheService {
-
     private val messages: ConcurrentMap<Snowflake, Cache<Snowflake, CachedMessage>> = ConcurrentHashMap()
     private val cacheAmt = System.getenv("CACHE_AMT")?.toLong() ?: 4000
 

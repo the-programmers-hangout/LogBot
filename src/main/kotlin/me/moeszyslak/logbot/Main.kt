@@ -19,20 +19,16 @@ private val startup = Instant.now()
 @KordPreview
 suspend fun main() {
     val token = System.getenv("BOT_TOKEN") ?: null
-    val prefix = System.getenv("DEFAULT_PREFIX") ?: "<none>"
-
-    require(token != null) { "Expected the bot token as an environment variable" }
 
     bot(token) {
         val configuration = data("config/config.json") { Configuration() }
 
         prefix {
-            guild?.let { configuration[it.id]?.prefix } ?: prefix
+            "/"
         }
 
         configure {
             theme = Color.MAGENTA
-            mentionAsPrefix = true
             commandReaction = null
             entitySupplyStrategy = EntitySupplyStrategy.cacheWithRestFallback
             defaultPermissions = Permissions(Permission.ManageMessages)

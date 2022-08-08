@@ -28,8 +28,6 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
         val guild = getGuild() ?: return@on
         val guildConfig = configuration[guild.id] ?: return@on
 
-        val prefix = guildConfig.prefix
-        if (message.content.startsWith(prefix)) return@on
         if (message.content.isEmpty()) return@on
 
         if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
@@ -40,13 +38,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
         if (!shouldBeLogged(member.roles.toList(), guildConfig.ignoredRoles)) return@on
 
         val cachedMessage = CachedMessage(
-            message.content,
-            message.getChannel(),
-            author,
-            message.id,
-            guild.id,
-            message.timestamp.toJavaInstant(),
-            message.attachments
+            message.content, message.getChannel(), author, message.id, guild.id, message.timestamp.toJavaInstant(), message.attachments
         )
 
         cacheService.addMessageToCache(guild.id, cachedMessage)

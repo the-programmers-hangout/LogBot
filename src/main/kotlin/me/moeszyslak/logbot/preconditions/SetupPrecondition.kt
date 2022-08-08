@@ -9,6 +9,6 @@ fun setupPrecondition(configuration: Configuration) = precondition {
 
     if (configuration.hasGuildConfig(guild.id)) return@precondition
 
-    if (!command.names.any { it.lowercase() == "setup" })
+    if (command.names.none { it.lowercase() == "configure" })
         fail("You must first use the `Setup` command in this guild.")
 }
