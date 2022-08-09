@@ -9,7 +9,7 @@ import java.awt.Color
 fun ignore(configuration: Configuration) = subcommand("Ignored") {
     sub("Add") {
         description = "Ignore this role."
-        execute(RoleArg) {
+        execute(RoleArg("Role", "Role to start ignoring.")) {
             val role = args.first
             val config = configuration[guild.id] ?: return@execute
 
@@ -27,7 +27,7 @@ fun ignore(configuration: Configuration) = subcommand("Ignored") {
 
     sub("Remove") {
         description = "Stop ignoring this role."
-        execute(RoleArg) {
+        execute(RoleArg("Role", "Role to stop ignoring.")) {
             val role = args.first
             val config = configuration[guild.id] ?: return@execute
 
