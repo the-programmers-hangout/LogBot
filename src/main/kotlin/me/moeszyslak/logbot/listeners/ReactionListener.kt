@@ -11,11 +11,11 @@ import me.moeszyslak.logbot.services.LoggerService
 fun reactionListener(loggerService: LoggerService, configuration: Configuration) = listeners {
     on<ReactionAddEvent> {
         val guild = getGuild() ?: return@on
-        val member = guild.getMemberOrNull(userId) ?: return@on
 
         val guildConfig = configuration[guild.id] ?: return@on
         if (!guildConfig.listenerEnabled(Listener.Reactions)) return@on
 
+        val member = guild.getMemberOrNull(userId) ?: return@on
         val jumpUrl = message.asMessage().jumpLink() ?: return@on
         loggerService.reactionAdd(guild, emoji, member, channel, jumpUrl)
     }
