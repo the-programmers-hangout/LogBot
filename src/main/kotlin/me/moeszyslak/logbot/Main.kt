@@ -35,21 +35,6 @@ suspend fun main() {
             intents = Intent.GuildMembers + Intent.GuildVoiceStates + Intent.GuildMessageReactions + Intent.DirectMessagesReactions
         }
 
-        mentionEmbed {
-            val guildConfiguration = configuration[it.guild!!.id]
-
-            title = "LogBot 1.4.2"
-            description = "A multi-guild discord bot to log everything and everything you could ever want"
-            color = it.discord.configuration.theme
-            thumbnail(it.discord.kord.getSelf().pfpUrl)
-            addInlineField("Source", "[GitHub](https://github.com/the-programmers-hangout/LogBot)")
-            addInlineField("Ping", it.discord.kord.gateway.averagePing?.toString() ?: "Unknown")
-            addInlineField("Startup", TimeStamp.at(startup, TimeStyle.RELATIVE))
-            addInlineField("Logging", "<#${guildConfiguration?.logChannel}>")
-            addInlineField("History", "<#${guildConfiguration?.historyChannel}>")
-            footer(it.discord.versions.toString())
-        }
-
         onStart {
             val cacheService = this.getInjectionObjects(DiscordCacheService::class)
             try {

@@ -1,6 +1,8 @@
+import java.util.*
+
 group = "me.moeszyslak"
-version = Versions.BOT
-description = "A multi-guild discord bot to log everything and everything you could ever want"
+version = "2.0.0"
+description = "A multi-guild logging bot"
 
 plugins {
     kotlin("jvm") version "1.7.10"
@@ -13,26 +15,28 @@ repositories {
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:${Versions.DISCORDKT}")
+    implementation("me.jakejmattson:DiscordKt:0.23.3")
     implementation("com.google.guava:guava:30.0-jre")
 }
 
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
+
+        Properties().apply {
+            setProperty("name", project.name)
+            setProperty("description", project.description)
+            setProperty("version", version.toString())
+            setProperty("url", "https://github.com/the-programmers-hangout/LogBot")
+
+            store(file("src/main/resources/bot.properties").outputStream(), null)
+        }
     }
 
     shadowJar {
         archiveFileName.set("LogBot.jar")
         manifest {
-            attributes(
-                "Main-Class" to "me.moeszyslak.logbot.MainKt"
-            )
+            attributes("Main-Class" to "me.moeszyslak.logbot.MainKt")
         }
     }
-}
-
-object Versions {
-    const val BOT = "1.0.0"
-    const val DISCORDKT = "0.23.2"
 }
