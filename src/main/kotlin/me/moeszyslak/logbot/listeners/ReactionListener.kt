@@ -22,10 +22,11 @@ fun reactionListener(loggerService: LoggerService, configuration: Configuration)
 
     on<ReactionRemoveEvent> {
         val guild = getGuild() ?: return@on
-        val member = guild.getMemberOrNull(userId) ?: return@on
-
+       
         val guildConfig = configuration[guild.id] ?: return@on
         if (!guildConfig.listenerEnabled(Listener.Reactions)) return@on
+        
+        val member = guild.getMemberOrNull(userId) ?: return@on
 
         val jumpUrl = message.asMessage().jumpLink() ?: return@on
         loggerService.reactionRemove(guild, emoji, member, channel, jumpUrl)
