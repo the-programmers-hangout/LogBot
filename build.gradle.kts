@@ -1,7 +1,7 @@
 import java.util.*
 
 group = "me.moeszyslak"
-version = "2.0.0"
+version = "2.0.1"
 description = "A multi-guild logging bot"
 
 plugins {
