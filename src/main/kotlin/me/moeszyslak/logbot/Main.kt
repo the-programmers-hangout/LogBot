@@ -28,7 +28,6 @@ suspend fun main() {
         configure {
             theme = Color.MAGENTA
             commandReaction = null
-            entitySupplyStrategy = EntitySupplyStrategy.cacheWithRestFallback
             defaultPermissions = Permissions(Permission.ManageMessages)
             intents = Intent.GuildMembers + Intent.GuildVoiceStates + Intent.GuildMessageReactions + Intent.DirectMessagesReactions
         }
