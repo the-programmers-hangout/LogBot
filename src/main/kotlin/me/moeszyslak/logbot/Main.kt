@@ -9,11 +9,9 @@ import dev.kord.gateway.PrivilegedIntent
 import me.jakejmattson.discordkt.dsl.bot
 import me.jakejmattson.discordkt.extensions.*
 import me.moeszyslak.logbot.dataclasses.Configuration
-import me.moeszyslak.logbot.services.DiscordCacheService
+import me.moeszyslak.logbot.services.LoggerService
 import java.awt.Color
 import java.time.Instant
-
-private val startup = Instant.now()
 
 @PrivilegedIntent
 @KordPreview
@@ -36,12 +34,8 @@ suspend fun main() {
         }
 
         onStart {
-            val cacheService = this.getInjectionObjects(DiscordCacheService::class)
-            try {
-                cacheService.run()
-            } catch (ex: Exception) {
-                println(ex.message)
-            }
+            val loggerService = this.getInjectionObjects(LoggerService::class)
+            loggerService.logDaemon()
         }
     }
 }
