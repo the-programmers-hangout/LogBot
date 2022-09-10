@@ -12,8 +12,7 @@ import me.moeszyslak.logbot.dataclasses.Listener
 import java.awt.Color
 
 fun listenerCommands(configuration: Configuration) = commands("Listeners", Permissions(Permission.ManageMessages)) {
-    slash("Status") {
-        description = "List all listeners and their current status."
+    slash("Status", "List all listeners and their status.") {
         execute {
             val guildConfig = configuration[guild.id] ?: return@execute
 
@@ -28,8 +27,7 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners", Permi
         }
     }
 
-    slash("Toggle") {
-        description = "Toggle listener"
+    slash("Toggle", "Toggle a listener") {
         execute(ChoiceArg("Listener", "The listener to toggle", *Listener.values())) {
             val listener = args.first
             val guildConfig = configuration[guild.id] ?: return@execute

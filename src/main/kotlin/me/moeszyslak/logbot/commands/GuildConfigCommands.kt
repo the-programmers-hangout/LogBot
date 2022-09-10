@@ -8,8 +8,7 @@ import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.dataclasses.GuildConfiguration
 
 fun guildConfigCommands(configuration: Configuration) = commands("Configuration", Permissions(Permission.Administrator)) {
-    slash("Configure") {
-        description = "Configure a guild."
+    slash("Configure", "Configure a guild.") {
         execute(ChannelArg("Logging", "Logging Channel"), ChannelArg("History", "History Channel")) {
             configuration[guild.id] = GuildConfiguration(args.first.id, args.second.id)
             respond("${guild.name} has been setup")

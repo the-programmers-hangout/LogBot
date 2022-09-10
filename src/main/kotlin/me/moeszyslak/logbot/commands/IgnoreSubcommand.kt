@@ -7,8 +7,7 @@ import me.moeszyslak.logbot.dataclasses.Configuration
 import java.awt.Color
 
 fun ignore(configuration: Configuration) = subcommand("Ignored") {
-    sub("Add") {
-        description = "Ignore this role."
+    sub("Add", "Ignore this role.") {
         execute(RoleArg("Role", "Role to start ignoring.")) {
             val role = args.first
             val config = configuration[guild.id] ?: return@execute
@@ -25,8 +24,7 @@ fun ignore(configuration: Configuration) = subcommand("Ignored") {
         }
     }
 
-    sub("Remove") {
-        description = "Stop ignoring this role."
+    sub("Remove", "Stop ignoring this role.") {
         execute(RoleArg("Role", "Role to stop ignoring.")) {
             val role = args.first
             val config = configuration[guild.id] ?: return@execute
@@ -43,8 +41,7 @@ fun ignore(configuration: Configuration) = subcommand("Ignored") {
         }
     }
 
-    sub("List") {
-        description = "List ignored roles."
+    sub("List", "List ignored roles.") {
         execute {
             val config = configuration[guild.id] ?: return@execute
 

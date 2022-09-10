@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.23.3")
+    implementation("me.jakejmattson:DiscordKt:0.23.4")
     implementation("com.google.guava:guava:30.0-jre")
 }
 
