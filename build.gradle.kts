@@ -1,5 +1,5 @@
 group = "me.moeszyslak"
-version = "2.0.1"
+version = "2.0.2"
 description = "A multi-guild logging bot"
 
 plugins {
