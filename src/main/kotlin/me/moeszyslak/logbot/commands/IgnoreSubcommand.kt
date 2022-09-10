@@ -7,7 +7,7 @@ import me.jakejmattson.discordkt.dsl.edit
 import me.moeszyslak.logbot.dataclasses.Configuration
 import java.awt.Color
 
-fun ignore(configuration: Configuration) = subcommand("Ignored") {
+fun ignore(configuration: Configuration) = subcommand("ignored") {
     sub("Add", "Ignore this role.") {
         execute(RoleArg("Role", "Role to start ignoring.")) {
             val role = args.first
@@ -20,7 +20,7 @@ fun ignore(configuration: Configuration) = subcommand("Ignored") {
 
             configuration.edit { config.ignoredRoles.add(role.id) }
 
-            respond("${role.name} added to the ignore list")
+            respondPublic("${role.name} added to the ignore list")
         }
     }
 
@@ -36,7 +36,7 @@ fun ignore(configuration: Configuration) = subcommand("Ignored") {
 
             configuration.edit { config.ignoredRoles.remove(role.id) }
 
-            respond("${role.name} removed from the ignore list")
+            respondPublic("${role.name} removed from the ignore list")
         }
     }
 
@@ -44,7 +44,7 @@ fun ignore(configuration: Configuration) = subcommand("Ignored") {
         execute {
             val config = configuration[guild.id] ?: return@execute
 
-            respond {
+            respondPublic {
                 title = "Currently ignored roles"
 
                 if (config.ignoredRoles.isEmpty()) {

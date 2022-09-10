@@ -7,35 +7,36 @@ import dev.kord.x.emoji.Emojis
 import me.jakejmattson.discordkt.arguments.ChoiceArg
 import me.jakejmattson.discordkt.arguments.RoleArg
 import me.jakejmattson.discordkt.commands.commands
+import me.jakejmattson.discordkt.commands.subcommand
 import me.jakejmattson.discordkt.dsl.edit
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.dataclasses.Listener
 import java.awt.Color
 
-fun listenerCommands(configuration: Configuration) = commands("Listeners", Permissions(Permission.ManageMessages)) {
-    slash("Status", "List all listeners and their status.") {
+fun listenerCommands(configuration: Configuration) = subcommand("listener", Permissions(Permission.ManageMessages)) {
+    sub("Status", "List all listeners and their status.") {
         execute {
             val guildConfig = configuration[guild.id] ?: return@execute
 
-            respond {
-                title = "Listener status"
-
+            respondPublic {
                 field {
-                    value =
-                        enumValues<Listener>().joinToString("\n\n") { if (guildConfig.listenerEnabled(it)) "${Emojis.whiteCheckMark} ${it.name}" else "${Emojis.x} ${it.name}" }
+                    name = "Listener status"
+                    value = enumValues<Listener>().joinToString("\n\n") {
+                        (if (guildConfig.listenerEnabled(it)) Emojis.whiteCheckMark else Emojis.x).toString() + " ${it.name}"
+                    }
                 }
             }
         }
     }
 
-    slash("Toggle", "Toggle a listener") {
+    sub("Toggle", "Toggle a listener on or off.") {
         execute(ChoiceArg("Listener", "The listener to toggle", *Listener.values())) {
             val listener = args.first
             val guildConfig = configuration[guild.id] ?: return@execute
 
             configuration.edit { guildConfig.listeners[listener] = !guildConfig.listenerEnabled(listener) }
 
-            respond("Logging of ${listener.value} is now ${if (guildConfig.listenerEnabled(listener)) "enabled" else "disabled"}")
+            respondPublic("Logging of ${listener.value} is now ${if (guildConfig.listenerEnabled(listener)) "enabled" else "disabled"}")
         }
     }
 }
