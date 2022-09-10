@@ -7,6 +7,7 @@ import dev.kord.x.emoji.Emojis
 import me.jakejmattson.discordkt.arguments.ChoiceArg
 import me.jakejmattson.discordkt.arguments.RoleArg
 import me.jakejmattson.discordkt.commands.commands
+import me.jakejmattson.discordkt.dsl.edit
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.dataclasses.Listener
 import java.awt.Color
@@ -32,8 +33,7 @@ fun listenerCommands(configuration: Configuration) = commands("Listeners", Permi
             val listener = args.first
             val guildConfig = configuration[guild.id] ?: return@execute
 
-            guildConfig.listeners[listener] = !guildConfig.listenerEnabled(listener)
-            configuration.save()
+            configuration.edit { guildConfig.listeners[listener] = !guildConfig.listenerEnabled(listener) }
 
             respond("Logging of ${listener.value} is now ${if (guildConfig.listenerEnabled(listener)) "enabled" else "disabled"}")
         }

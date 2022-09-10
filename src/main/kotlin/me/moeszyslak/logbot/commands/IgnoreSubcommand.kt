@@ -3,6 +3,7 @@ package me.moeszyslak.logbot.commands
 import dev.kord.common.kColor
 import me.jakejmattson.discordkt.arguments.RoleArg
 import me.jakejmattson.discordkt.commands.subcommand
+import me.jakejmattson.discordkt.dsl.edit
 import me.moeszyslak.logbot.dataclasses.Configuration
 import java.awt.Color
 
@@ -17,8 +18,7 @@ fun ignore(configuration: Configuration) = subcommand("Ignored") {
                 return@execute
             }
 
-            config.ignoredRoles.add(role.id)
-            configuration.save()
+            configuration.edit { config.ignoredRoles.add(role.id) }
 
             respond("${role.name} added to the ignore list")
         }
@@ -34,8 +34,7 @@ fun ignore(configuration: Configuration) = subcommand("Ignored") {
                 return@execute
             }
 
-            config.ignoredRoles.remove(role.id)
-            configuration.save()
+            configuration.edit { config.ignoredRoles.remove(role.id) }
 
             respond("${role.name} removed from the ignore list")
         }

@@ -1,20 +1,16 @@
 package me.moeszyslak.logbot.dataclasses
 
 import dev.kord.common.entity.Snowflake
-import dev.kord.core.entity.Guild
-import dev.kord.core.entity.channel.Channel
 import kotlinx.serialization.Serializable
 import me.jakejmattson.discordkt.dsl.Data
+import me.jakejmattson.discordkt.dsl.edit
 
 @Serializable
 data class Configuration(val guildConfigurations: MutableMap<Snowflake, GuildConfiguration> = mutableMapOf()) : Data() {
 
     operator fun get(id: Snowflake) = guildConfigurations[id]
 
-    operator fun set(id: Snowflake, configuration: GuildConfiguration) {
-        guildConfigurations[id] = configuration
-        save()
-    }
+    operator fun set(id: Snowflake, configuration: GuildConfiguration) = edit { guildConfigurations[id] = configuration }
 
     fun hasGuildConfig(guildId: Snowflake) = guildConfigurations.containsKey(guildId)
 }
