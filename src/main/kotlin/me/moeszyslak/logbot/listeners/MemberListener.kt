@@ -14,7 +14,7 @@ fun memberListener(loggerService: LoggerService, configuration: Configuration) =
 
         if (!guildConfig.listenerEnabled(Listener.Members)) return@on
 
-        loggerService.memberJoin(guild, member)
+        loggerService.serverJoin(guild, member)
     }
 
     on<MemberLeaveEvent> {
@@ -23,6 +23,6 @@ fun memberListener(loggerService: LoggerService, configuration: Configuration) =
 
         if (!guildConfig.listenerEnabled(Listener.Members)) return@on
 
-        loggerService.memberLeave(guild, user)
+        loggerService.serverLeave(guild, user)
     }
 }

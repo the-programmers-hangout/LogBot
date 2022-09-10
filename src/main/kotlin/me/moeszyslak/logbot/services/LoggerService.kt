@@ -1,26 +1,20 @@
 package me.moeszyslak.logbot.services
 
-import com.google.common.cache.Cache
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.behavior.channel.MessageChannelBehavior
 import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.getChannelOf
 import dev.kord.core.entity.*
-import dev.kord.core.entity.channel.Channel
 import dev.kord.core.entity.channel.TextChannel
 import dev.kord.rest.builder.message.create.allowedMentions
 import kotlinx.coroutines.*
 import kotlinx.datetime.toJavaInstant
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
+import me.jakejmattson.discordkt.extensions.TimeStamp
+import me.jakejmattson.discordkt.extensions.TimeStyle
 import me.jakejmattson.discordkt.extensions.descriptor
-import me.jakejmattson.discordkt.extensions.idDescriptor
 import me.moeszyslak.logbot.dataclasses.Configuration
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
 data class LogMessage(
     val logMsg: String,
@@ -40,59 +34,24 @@ class LoggerService(private val config: Configuration, private val discord: Disc
         logMessages[guild.id]!!.add(LogMessage(message, shouldPing))
     }
 
+    fun serverJoin(guild: Guild, member: Member) =
+        addToLog(guild, "USER JOINED :: ${member.descriptor()} " +
+            "(created ${TimeStamp.at(member.id.timestamp.toJavaInstant(), TimeStyle.RELATIVE)})")
 
-    /*
+    fun serverLeave(guild: Guild, user: User) =
+        addToLog(guild, "USER LEFT :: ${user.descriptor()}")
 
-        Member Join/Leave Events
+    fun voiceJoin(guild: Guild, user: User, channelId: Snowflake) =
+        addToLog(guild, "VOICE JOIN :: <#${channelId.value}> :: ${user.descriptor()}", false)
 
-     */
-    fun memberJoin(guild: Guild, member: Member) {
-        addToLog(
-            guild, "${member.descriptor()} " +
-                    "created at ${LocalDateTime.ofInstant(member.id.timestamp.toJavaInstant(), ZoneOffset.UTC)} " +
-                    "joined the server")
+    fun voiceLeave(guild: Guild, user: User, channelId: Snowflake) =
+        addToLog(guild, "VOICE LEAVE :: <#${channelId.value}> :: ${user.descriptor()}", false)
 
-    }
+    fun reactionAdd(guild: Guild, reaction: ReactionEmoji, member: Member, channel: MessageChannelBehavior, jumpUrl: String) =
+        addToLog(guild, "REACTION ADD :: ${member.descriptor()} :: ${reaction.mention} :: ${channel.mention} \n$jumpUrl", false)
 
-    fun memberLeave(guild: Guild, user: User) {
-        addToLog(guild, "${user.descriptor()} " +
-                "created at ${LocalDateTime.ofInstant(user.id.timestamp.toJavaInstant(), ZoneOffset.UTC)} " +
-                "left the server")
-    }
-
-    /*
-
-        Voice Channel Events
-
-
-     */
-    fun voiceChannelJoin(guild: Guild, user: User, channelId: Snowflake) {
-        addToLog(guild, "${user.idDescriptor()} joined voice channel <#${channelId.value}>", false)
-
-    }
-
-    fun voiceChannelLeave(guild: Guild, user: User, channelId: Snowflake) {
-        addToLog(guild, "${user.idDescriptor()} left voice channel <#${channelId.value}>", false)
-    }
-
-    /*
-
-        Reaction Events
-
-     */
-
-    fun reactionAdd(guild: Guild, reaction: ReactionEmoji, member: Member, channel: MessageChannelBehavior, jumpUrl: String) {
-        addToLog(guild, "${member.idDescriptor()} " +
-                "added reaction ${reaction.mention} in ${channel.mention} :: $jumpUrl", false)
-    }
-
-    fun reactionRemove(guild: Guild, reaction: ReactionEmoji, member: Member, channel: MessageChannelBehavior, jumpUrl: String) {
-        addToLog(guild, "${member.idDescriptor()} " +
-                "removed reaction ${reaction.mention} in ${channel.mention} :: $jumpUrl", false)
-    }
-
-
-
+    fun reactionRemove(guild: Guild, reaction: ReactionEmoji, member: Member, channel: MessageChannelBehavior, jumpUrl: String) =
+        addToLog(guild, "REACTION REMOVE :: ${member.descriptor()} :: ${reaction.mention} :: ${channel.mention} \n$jumpUrl", false)
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun logDaemon() {
