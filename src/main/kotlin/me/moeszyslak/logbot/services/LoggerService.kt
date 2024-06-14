@@ -66,7 +66,7 @@ class LoggerService(private val config: Configuration, private val discord: Disc
     private suspend fun processLog() {
         logMessages.forEach {
 
-            val guild = discord.kord.getGuild(it.key)
+            val guild = discord.kord.getGuildOrNull(it.key)
             if (guild == null) {
                 logMessages.remove(it.key)
                 return@forEach
