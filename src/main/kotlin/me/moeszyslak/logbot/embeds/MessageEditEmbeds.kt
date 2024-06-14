@@ -1,29 +1,25 @@
 package me.moeszyslak.logbot.embeds
 
 import dev.kord.common.kColor
+import dev.kord.core.entity.User
 import dev.kord.rest.builder.message.EmbedBuilder
-import me.jakejmattson.discordkt.util.simpleDescriptor
+import me.jakejmattson.discordkt.util.*
 import me.moeszyslak.logbot.extensions.createContinuableField
 import me.moeszyslak.logbot.services.CachedMessage
 import java.awt.Color
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
+import java.time.Instant
+
+fun formatTimeStamp(timestamp: Instant) =
+    TimeStamp.at(timestamp, TimeStyle.RELATIVE) + "\n" + TimeStamp.at(timestamp, TimeStyle.DATETIME_LONG)
+
+fun User.formatDisplay() = "$mention ($fullName)"
 
 fun EmbedBuilder.createMessageDeleteEmbed(cachedMessage: CachedMessage) {
     title = "Message Deleted"
     color = Color.RED.kColor
 
-    field {
-        name = "User"
-        value = cachedMessage.user.simpleDescriptor()
-        inline = true
-    }
-
-    field {
-        name = "Channel"
-        value = cachedMessage.channel.mention
-        inline = true
-    }
+    addInlineField("User", cachedMessage.user.formatDisplay())
+    addInlineField("Channel", cachedMessage.channel.mention)
 
     createContinuableField("Content", cachedMessage.content)
 
@@ -34,49 +30,26 @@ fun EmbedBuilder.createMessageDeleteEmbed(cachedMessage: CachedMessage) {
         }
     }
 
-    field {
-        name = "Sent at"
-        value = cachedMessage.timestamp.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME)
-        inline = true
-    }
-
+    addInlineField("Sent at", formatTimeStamp(cachedMessage.timestamp))
 }
 
 fun EmbedBuilder.createMessageEditedEmbed(newMessage: CachedMessage, cachedMessage: CachedMessage) {
     title = "Message Edited"
     color = Color.ORANGE.kColor
 
-    field {
-        name = "User"
-        value = cachedMessage.user.simpleDescriptor()
-        inline = true
-    }
-
-    field {
-        name = "Channel"
-        value = cachedMessage.channel.mention
-        inline = true
-    }
+    addInlineField("User", cachedMessage.user.formatDisplay())
+    addInlineField("Channel", cachedMessage.channel.mention)
 
     field {
         name = "Link"
-        value = "[Jump To](https://discord.com/channels/${cachedMessage.guildId}/${cachedMessage.channel.id}/${cachedMessage.messageId})"
+        value =
+            "[Jump To](https://discord.com/channels/${cachedMessage.guildId}/${cachedMessage.channel.id}/${cachedMessage.messageId})"
         inline = true
     }
 
     createContinuableField("Old", cachedMessage.content)
     createContinuableField("New", newMessage.content)
 
-
-    field {
-        name = "Old message sent at"
-        value = cachedMessage.timestamp.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME)
-        inline = true
-    }
-
-    field {
-        name = "New message sent at"
-        value = newMessage.timestamp.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.RFC_1123_DATE_TIME)
-        inline = true
-    }
+    addInlineField("Original", formatTimeStamp(cachedMessage.timestamp))
+    addInlineField("Edited", formatTimeStamp(newMessage.timestamp))
 }

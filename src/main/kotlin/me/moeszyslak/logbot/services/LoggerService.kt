@@ -48,10 +48,10 @@ class LoggerService(private val config: Configuration, private val discord: Disc
         addToLog(guild, "VOICE LEAVE :: <#${channelId.value}> :: ${user.descriptor()}", false)
 
     fun reactionAdd(guild: Guild, reaction: ReactionEmoji, member: Member, channel: MessageChannelBehavior, jumpUrl: String) =
-        addToLog(guild, "REACTION ADD :: ${member.descriptor()} :: ${reaction.mention} :: ${channel.mention} \n$jumpUrl", false)
+        addToLog(guild, "REACTION ADD :: ${member.descriptor()} :: ${reaction.mention} :: ${channel.mention} :: $jumpUrl", false)
 
     fun reactionRemove(guild: Guild, reaction: ReactionEmoji, member: Member, channel: MessageChannelBehavior, jumpUrl: String) =
-        addToLog(guild, "REACTION REMOVE :: ${member.descriptor()} :: ${reaction.mention} :: ${channel.mention} \n$jumpUrl", false)
+        addToLog(guild, "REACTION REMOVE :: ${member.descriptor()} :: ${reaction.mention} :: ${channel.mention} :: $jumpUrl", false)
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun logDaemon() {
