@@ -6,14 +6,14 @@ import dev.kord.core.behavior.channel.createMessage
 import dev.kord.core.behavior.getChannelOf
 import dev.kord.core.entity.*
 import dev.kord.core.entity.channel.TextChannel
-import dev.kord.rest.builder.message.create.allowedMentions
+import dev.kord.rest.builder.message.allowedMentions
 import kotlinx.coroutines.*
 import kotlinx.datetime.toJavaInstant
 import me.jakejmattson.discordkt.Discord
 import me.jakejmattson.discordkt.annotations.Service
-import me.jakejmattson.discordkt.extensions.TimeStamp
-import me.jakejmattson.discordkt.extensions.TimeStyle
-import me.jakejmattson.discordkt.extensions.descriptor
+import me.jakejmattson.discordkt.util.TimeStamp
+import me.jakejmattson.discordkt.util.TimeStyle
+import me.jakejmattson.discordkt.util.descriptor
 import me.moeszyslak.logbot.dataclasses.Configuration
 
 data class LogMessage(

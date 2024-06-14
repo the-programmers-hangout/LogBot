@@ -3,10 +3,12 @@ package me.moeszyslak.logbot
 import dev.kord.common.annotation.KordPreview
 import dev.kord.common.entity.Permission
 import dev.kord.common.entity.Permissions
+import dev.kord.core.event.message.MessageCreateEvent
+import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import me.jakejmattson.discordkt.dsl.bot
-import me.jakejmattson.discordkt.extensions.plus
+import me.jakejmattson.discordkt.util.intentsOf
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.services.LoggerService
 import java.awt.Color
@@ -26,7 +28,7 @@ suspend fun main() {
             commandReaction = null
             recommendCommands = false
             defaultPermissions = Permissions(Permission.ManageMessages)
-            intents = Intent.GuildMembers + Intent.GuildVoiceStates + Intent.GuildMessageReactions + Intent.DirectMessagesReactions
+            intents = Intent.GuildMembers + Intent.GuildVoiceStates + intentsOf<ReactionAddEvent>() + intentsOf<MessageCreateEvent>()
         }
 
         onStart {

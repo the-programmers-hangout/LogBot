@@ -1,11 +1,11 @@
 group = "me.moeszyslak"
-version = "2.0.2"
+version = "2.0.3"
 description = "A multi-guild logging bot"
 
 plugins {
-    kotlin("jvm") version "1.7.10"
-    kotlin("plugin.serialization") version "1.7.10"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
@@ -13,14 +13,17 @@ repositories {
 }
 
 dependencies {
-    implementation("me.jakejmattson:DiscordKt:0.23.4")
-    implementation("com.google.guava:guava:30.0-jre")
+    implementation("me.jakejmattson:DiscordKt:0.24.0")
+    implementation("com.google.guava:guava:33.2.1-jre")
 }
 
 tasks {
+    kotlin {
+        jvmToolchain(11)
+    }
+
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-        dependsOn("writeProperties")
+        doLast("writeProperties") {}
     }
 
     register<WriteProperties>("writeProperties") {

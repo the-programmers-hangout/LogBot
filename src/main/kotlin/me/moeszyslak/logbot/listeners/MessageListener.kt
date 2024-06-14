@@ -25,7 +25,7 @@ import java.time.Instant
 fun messageListener(configuration: Configuration, cacheService: CacheService, discord: Discord) = listeners {
     on<MessageCreateEvent> {
         message.author?.takeUnless { it.isBot } ?: return@on
-        val guild = getGuild() ?: return@on
+        val guild = getGuildOrNull() ?: return@on
         val guildConfig = configuration[guild.id] ?: return@on
 
         if (message.content.isEmpty()) return@on
@@ -51,7 +51,7 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
         if (newContent.isEmpty()) return@on
         if (!guildConfig.listenerEnabled(Listener.Messages)) return@on
 
-        val guild = discord.kord.getGuild(guildId) ?: return@on
+        val guild = discord.kord.getGuildOrNull(guildId) ?: return@on
         val member = new.member.value ?: return@on
 
         if (!shouldBeLogged(member.roles.map { guild.getRole(it) }, guildConfig.ignoredRoles)) return@on
@@ -97,12 +97,12 @@ fun messageListener(configuration: Configuration, cacheService: CacheService, di
     }
 
     on<MessageDeleteEvent> {
-        val guild = getGuild() ?: return@on
+        val guild = getGuildOrNull() ?: return@on
         logMessageDelete(kord, guild.id, messageId)
     }
 
     on<MessageBulkDeleteEvent> {
-        val guild = getGuild() ?: return@on
+        val guild = getGuildOrNull() ?: return@on
         messageIds.forEach { logMessageDelete(kord, guild.id, it) }
     }
 }

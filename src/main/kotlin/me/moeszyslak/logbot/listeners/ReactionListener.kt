@@ -3,14 +3,14 @@ package me.moeszyslak.logbot.listeners
 import dev.kord.core.event.message.ReactionAddEvent
 import dev.kord.core.event.message.ReactionRemoveEvent
 import me.jakejmattson.discordkt.dsl.listeners
-import me.jakejmattson.discordkt.extensions.jumpLink
+import me.jakejmattson.discordkt.util.jumpLink
 import me.moeszyslak.logbot.dataclasses.Configuration
 import me.moeszyslak.logbot.dataclasses.Listener
 import me.moeszyslak.logbot.services.LoggerService
 
 fun reactionListener(loggerService: LoggerService, configuration: Configuration) = listeners {
     on<ReactionAddEvent> {
-        val guild = getGuild() ?: return@on
+        val guild = getGuildOrNull() ?: return@on
 
         val guildConfig = configuration[guild.id] ?: return@on
         if (!guildConfig.listenerEnabled(Listener.Reactions)) return@on
@@ -21,7 +21,7 @@ fun reactionListener(loggerService: LoggerService, configuration: Configuration)
     }
 
     on<ReactionRemoveEvent> {
-        val guild = getGuild() ?: return@on
+        val guild = getGuildOrNull() ?: return@on
        
         val guildConfig = configuration[guild.id] ?: return@on
         if (!guildConfig.listenerEnabled(Listener.Reactions)) return@on
