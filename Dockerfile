@@ -1,9 +1,9 @@
-FROM gradle:8.8-jdk21 AS build
+FROM gradle:8.8-jdk17 AS build
 COPY --chown=gradle:gradle . /logbot
 WORKDIR /logbot
 RUN gradle shadowJar --no-daemon
 
-FROM openjdk:11.0.16-jre-slim
+FROM eclipse-temurin:17-jre
 RUN mkdir /config/
 COPY --from=build /logbot/build/libs/*.jar /
 

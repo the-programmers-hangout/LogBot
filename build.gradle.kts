@@ -19,7 +19,7 @@ dependencies {
 
 tasks {
     kotlin {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
 
     compileKotlin {
